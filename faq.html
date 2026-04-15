@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SKR — 자주 묻는 질문</title>
+  <meta name="description" content="SKR 자주 묻는 질문" />
+  <link rel="stylesheet" href="./style.css" />
+  <script src="./site-data.js"></script>
+  <style>
+    :root {
+      --bg: #fbfbfd;
+      --ink: #1d1d1f;
+      --muted: #86868b;
+      --link: #0071e3;
+      --accent: #ff6a3d;
+      --rule: rgba(0,0,0,0.08);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Pretendard', 'SF Pro KR', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      word-break: keep-all;
+    }
+    body { margin: 0; }
+    a { color: inherit; text-decoration: none; }
+
+    .nav {
+      position: sticky; top: 0; z-index: 60;
+      background: rgba(251,251,253,0.72);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--rule);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; flex-wrap: wrap; padding: 8px 0; }
+    .nav-brand { font-weight: 700; font-size: 19px; letter-spacing: -0.02em; color: var(--ink); }
+    .nav-links { display: flex; gap: 22px; font-size: 13px; font-weight: 500; color: var(--ink); flex-wrap: wrap; justify-content: flex-end; }
+    .nav-links a { opacity: .75; transition: opacity .15s; }
+    .nav-links a:hover { opacity: 1; }
+    .nav-links a.active { opacity: 1; color: var(--link); font-weight: 600; }
+
+    .wrap { width: min(820px, calc(100% - 44px)); margin: 0 auto; }
+
+    .hero { text-align: center; padding: 88px 0 48px; }
+    .eyebrow { font-size: 14px; font-weight: 600; letter-spacing: -0.008em; color: var(--accent); }
+    .display { font-size: clamp(40px, 6vw, 64px); font-weight: 700; line-height: 1.06; letter-spacing: -0.04em; margin: 12px 0 0; }
+    .lede { font-size: 17px; line-height: 1.6; color: var(--muted); margin: 18px auto 0; max-width: 44ch; }
+
+    /* FAQ list */
+    .faq-list { margin: 48px auto 120px; border-top: 1px solid var(--rule); }
+    .faq-item { border-bottom: 1px solid var(--rule); }
+    .faq-q {
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+      padding: 26px 4px;
+      background: none; border: none; cursor: pointer;
+      font-family: inherit; color: var(--ink);
+      font-size: 18px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.4;
+      text-align: left;
+    }
+    .faq-q .plus {
+      flex-shrink: 0;
+      width: 22px; height: 22px; position: relative;
+      transition: transform .25s ease;
+    }
+    .faq-q .plus::before, .faq-q .plus::after {
+      content: ''; position: absolute; background: var(--ink);
+      transition: transform .25s ease, opacity .25s ease;
+    }
+    .faq-q .plus::before { left: 0; right: 0; top: 50%; height: 2px; transform: translateY(-50%); }
+    .faq-q .plus::after  { top: 0; bottom: 0; left: 50%; width: 2px; transform: translateX(-50%); }
+    .faq-item.open .faq-q .plus::after { transform: translateX(-50%) rotate(90deg); opacity: 0; }
+    .faq-item.open .faq-q { color: var(--link); }
+
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height .3s ease;
+    }
+    .faq-a-inner {
+      padding: 0 4px 26px;
+      font-size: 16px; line-height: 1.75; color: var(--muted);
+      letter-spacing: -0.01em;
+      white-space: pre-wrap;
+    }
+
+    /* Float ask */
+    .float-ask {
+      position: fixed; right: 24px; bottom: 24px; z-index: 80;
+      display: flex; flex-direction: column; gap: 10px; align-items: flex-end;
+    }
+    .float-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 22px; border-radius: 999px;
+      font-size: 14px; font-weight: 700; letter-spacing: -0.01em;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+      transition: transform .18s;
+    }
+    .float-btn:hover { transform: translateY(-2px); }
+    .float-btn.kakao { background: #fee500; color: #111; }
+    .float-btn.order { background: var(--ink); color: #fff; }
+
+    .footer {
+      background: #f5f5f7;
+      padding: 36px 0 28px;
+      font-size: 12px; color: var(--muted); line-height: 1.6;
+      border-top: 1px solid var(--rule);
+    }
+    .footer-inner { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+    @media (max-width: 560px) {
+      .nav-links { gap: 14px; font-size: 12px; }
+      .hero { padding: 56px 0 28px; }
+      .display { font-size: clamp(30px, 8vw, 44px); }
+      .faq-list { margin: 32px auto 140px; }
+      .faq-q { font-size: 15px; padding: 20px 2px; gap: 14px; }
+      .faq-a-inner { font-size: 14px; padding: 0 2px 22px; }
+      .float-ask { right: 12px; bottom: 12px; gap: 8px; }
+      .float-btn { padding: 11px 16px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="wrap nav-inner" style="width:min(1120px, calc(100% - 44px));">
+      <a href="./index.html" class="nav-brand" data-bind="global.brandName">SKR</a>
+      <nav class="nav-links">
+        <a href="./index.html" data-bind="global.navHome">홈</a>
+        <a href="./pricing.html" data-bind="global.navPricing">가격</a>
+        <a href="./faq.html" class="active" data-bind="global.navFaq">자주 묻는 질문</a>
+        <a href="./order.html" data-bind="global.navOrder">구매</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <p class="eyebrow">FAQ</p>
+        <h1 class="display" data-bind="faq.heroTitle">자주 묻는 질문</h1>
+        <p class="lede" data-bind="faq.heroText">구매 전 많이 물어보시는 내용을 모았습니다.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div id="faqList" class="faq-list"></div>
+        <div id="faqEmpty" style="display:none;padding:60px 0;text-align:center;color:var(--muted);font-size:15px;">등록된 질문이 없습니다.</div>
+      </div>
+    </section>
+  </main>
+
+  <div class="float-ask">
+    <a href="#" class="float-btn kakao"><span>💬</span><span data-bind="global.floatKakaoText">카톡 상담</span></a>
+    <a href="./order.html" class="float-btn order"><span>🛒</span><span data-bind="global.floatOrderText">바로 구매</span></a>
+  </div>
+
+  <footer class="footer">
+    <div class="wrap footer-inner" style="width:min(1120px, calc(100% - 44px));">
+      <span data-bind="global.contactLabel">SKR Studio</span>
+      <span data-bind="global.contactSubLabel">컴카드 · 프로필 · 포트폴리오 제작</span>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const content = window.getSkrContent();
+
+      document.querySelectorAll('[data-bind]').forEach((node) => {
+        const path = node.getAttribute('data-bind');
+        const value = path.split('.').reduce((a, k) => (a ? a[k] : ''), content) || '';
+        node.textContent = value;
+      });
+
+      const items = (content.faq && content.faq.items) || [];
+      const list = document.getElementById('faqList');
+      const empty = document.getElementById('faqEmpty');
+      if (!items.length) {
+        empty.style.display = 'block';
+        list.style.display = 'none';
+      } else {
+        items.forEach((it) => {
+          const item = document.createElement('div');
+          item.className = 'faq-item';
+          const btn = document.createElement('button');
+          btn.className = 'faq-q';
+          btn.type = 'button';
+          btn.innerHTML = `<span></span><span class="plus"></span>`;
+          btn.firstChild.textContent = it.q || '';
+          const ans = document.createElement('div');
+          ans.className = 'faq-a';
+          const inner = document.createElement('div');
+          inner.className = 'faq-a-inner';
+          inner.textContent = it.a || '';
+          ans.appendChild(inner);
+          btn.addEventListener('click', () => {
+            const isOpen = item.classList.toggle('open');
+            ans.style.maxHeight = isOpen ? (ans.scrollHeight + 'px') : '0px';
+          });
+          item.appendChild(btn);
+          item.appendChild(ans);
+          list.appendChild(item);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

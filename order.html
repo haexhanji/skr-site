@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SKR — 구매 신청</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script src="./site-data.js"></script>
+</head>
+<body style="background:#f5f5f7;color:#1d1d1f;">
+
+  <header class="site-header light">
+    <div class="header-bg">
+      <div class="container" style="display:flex;align-items:center;justify-content:space-between;min-height:64px;gap:16px;">
+        <a href="./index.html" class="eyebrow" style="color:#1d1d1f;" data-bind="global.brandName">SKR</a>
+        <nav style="display:flex;gap:28px;font-size:13px;font-weight:500;color:#6e6e73;">
+          <a href="./index.html" data-bind="global.navHome">메인</a>
+          <a href="./pricing.html" data-bind="global.navPricing">가격</a>
+          <a href="./faq.html" data-bind="global.navFaq">자주 묻는 질문</a>
+          <a href="./order.html" style="color:#0071e3;font-weight:600;" data-bind="global.navOrder">구매</a>
+        </nav>
+        <a href="./pricing.html" class="btn btn-outline" style="min-height:40px;padding:0 20px;font-size:13px;">가격 다시 보기</a>
+      </div>
+    </div>
+  </header>
+
+  <main style="padding-top:64px;">
+    <section style="padding:64px 0 80px;">
+      <div class="container">
+
+        <!-- Hero text -->
+        <div style="text-align:center;margin-bottom:48px;">
+          <p class="eyebrow" style="color:#6e6e73;">Purchase Flow</p>
+          <h1 class="headline" style="margin-top:16px;" data-bind="order.heroTitle" data-multiline="true">하나씩 고르며<br />구매를 진행하세요.</h1>
+          <p style="margin-top:18px;font-size:16px;line-height:1.8;color:#6e6e73;max-width:480px;margin-left:auto;margin-right:auto;" data-bind="order.heroText">패키지 선택부터 추가 옵션, 할인 조건, 신청자 정보, 최종 확인까지 단계형으로 진행됩니다.</p>
+        </div>
+
+        <!-- Step indicator -->
+        <div style="margin-bottom:40px;">
+          <div class="steps-track" id="stepsTrack" style="justify-content:center;"></div>
+        </div>
+
+        <!-- Content + Summary -->
+        <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;" id="wizardGrid">
+
+          <!-- Step panels -->
+          <div>
+
+            <!-- STEP 1 -->
+            <div id="panel1" class="card" style="padding:36px;">
+              <p class="eyebrow" style="color:#6e6e73;">STEP 1</p>
+              <h2 class="title" style="margin-top:12px;">패키지 선택</h2>
+              <div id="packageCards" style="margin-top:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;"></div>
+              <div style="display:flex;justify-content:flex-end;margin-top:28px;">
+                <button onclick="wizard.go(2)" class="btn btn-blue">다음 →</button>
+              </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div id="panel2" class="card" style="display:none;padding:36px;">
+              <p class="eyebrow" style="color:#6e6e73;">STEP 2</p>
+              <h2 class="title" style="margin-top:12px;">추가 옵션 선택</h2>
+              <div id="optionCards" style="margin-top:24px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px;"></div>
+              <div style="display:flex;justify-content:space-between;margin-top:28px;">
+                <button onclick="wizard.go(1)" class="btn btn-outline">← 이전</button>
+                <button onclick="wizard.go(3)" class="btn btn-blue">다음 →</button>
+              </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div id="panel3" class="card" style="display:none;padding:36px;">
+              <p class="eyebrow" style="color:#6e6e73;">STEP 3</p>
+              <h2 class="title" style="margin-top:12px;">할인 및 조건 확인</h2>
+              <div style="margin-top:24px;display:flex;flex-direction:column;gap:16px;">
+                <div style="background:#f8f8fa;border:1.5px solid rgba(0,0,0,0.07);border-radius:18px;padding:24px;">
+                  <p style="font-size:15px;font-weight:600;">학생이신가요?</p>
+                  <p style="margin-top:6px;font-size:13px;color:#6e6e73;line-height:1.7;">고등학생 또는 대학교 재학생이면 추가 옵션에 10% 할인이 적용됩니다. 학생증 또는 재학증명서 확인이 필요합니다.</p>
+                  <label style="display:flex;align-items:center;gap:10px;margin-top:16px;cursor:pointer;">
+                    <input id="studentCheck" type="checkbox" style="width:18px;height:18px;accent-color:#0071e3;" onchange="wizard.updateStudent(this.checked)" />
+                    <span style="font-size:14px;font-weight:600;">학생 할인 적용 (추가 옵션 10% 할인)</span>
+                  </label>
+                </div>
+                <div style="background:#f8f8fa;border:1.5px solid rgba(0,0,0,0.07);border-radius:18px;padding:18px 20px;font-size:13px;color:#9ca3af;line-height:1.9;">
+                  · 허위 할인 신청 시 주문 취소 또는 환불 처리될 수 있습니다.<br />
+                  · 학생 패키지는 학생 전용이며, 인증 파일 미제출 시 기본 패키지로 전환됩니다.<br />
+                  · 입금 후 할인 대상 확인이 진행됩니다.
+                </div>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:28px;">
+                <button onclick="wizard.go(2)" class="btn btn-outline">← 이전</button>
+                <button onclick="wizard.go(4)" class="btn btn-blue">다음 →</button>
+              </div>
+            </div>
+
+            <!-- STEP 4 -->
+            <div id="panel4" class="card" style="display:none;padding:36px;">
+              <p class="eyebrow" style="color:#6e6e73;">STEP 4</p>
+              <h2 class="title" style="margin-top:12px;">신청자 정보 입력</h2>
+              <div style="margin-top:24px;">
+                <p class="eyebrow" style="color:#0071e3;margin-bottom:16px;">필수 항목</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                  <input id="buyerName" class="form-input" placeholder="이름 *" />
+                  <input id="buyerPhone" class="form-input" placeholder="전화번호 *" />
+                  <input id="buyerEmail" class="form-input" placeholder="이메일 *" />
+                  <select id="buyerType" class="form-input" style="color:#1d1d1f;">
+                    <option value="" disabled selected>신청자 유형 *</option>
+                    <option value="배우">배우</option>
+                    <option value="가수">가수</option>
+                    <option value="모델">모델</option>
+                    <option value="기타">기타</option>
+                  </select>
+                  <input id="buyerDepositorName" class="form-input" placeholder="입금자명 *" />
+                  <input id="buyerRefundAccount" class="form-input" placeholder="환불 계좌번호 *" />
+                  <input id="buyerRefundHolder" class="form-input" placeholder="예금주명 *" style="grid-column:span 2;" />
+                </div>
+
+                <button type="button" id="optionalToggle" onclick="wizard.toggleOptional()" style="display:flex;align-items:center;gap:8px;margin-top:20px;font-size:13px;font-weight:600;color:#0071e3;background:none;border:none;padding:0;cursor:pointer;">
+                  <span id="optionalToggleIcon" style="font-size:16px;">＋</span>선택 항목 추가하기 (인스타그램, 소속사, 기타 요청)
+                </button>
+                <div id="optionalFields" style="display:none;margin-top:16px;display:none;">
+                  <p class="eyebrow" style="color:#9ca3af;margin-bottom:14px;">선택 항목</p>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <input id="buyerInstagram" class="form-input" placeholder="인스타그램 (선택)" />
+                    <input id="buyerAgency" class="form-input" placeholder="소속사 / 소속 여부 (선택)" />
+                    <textarea id="buyerNote" class="form-input" rows="3" placeholder="기타 요청사항 및 궁금한 점 (선택)" style="grid-column:span 2;resize:vertical;"></textarea>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:28px;">
+                <button onclick="wizard.go(3)" class="btn btn-outline">← 이전</button>
+                <button onclick="wizard.go(5)" class="btn btn-blue">다음 →</button>
+              </div>
+            </div>
+
+            <!-- STEP 5 -->
+            <div id="panel5" class="card" style="display:none;padding:36px;">
+              <p class="eyebrow" style="color:#6e6e73;">STEP 5</p>
+              <h2 class="title" style="margin-top:12px;">최종 확인</h2>
+              <div id="finalSummary" style="margin-top:24px;background:#f8f8fa;border-radius:18px;padding:24px;font-size:15px;line-height:2;"></div>
+              <div style="display:flex;justify-content:space-between;margin-top:28px;">
+                <button onclick="wizard.go(4)" class="btn btn-outline">← 이전</button>
+                <button id="submitOrderBtn" class="btn btn-blue" style="min-height:54px;padding:0 40px;font-size:16px;">구매 신청하기</button>
+              </div>
+            </div>
+
+          </div><!-- /step content -->
+
+          <!-- Summary -->
+          <div>
+            <div class="dark-panel" style="padding:28px;position:sticky;top:88px;">
+              <p style="font-size:11px;font-weight:700;letter-spacing:0.1em;color:rgba(255,255,255,0.4);text-transform:uppercase;">Summary</p>
+              <h3 style="margin-top:10px;font-size:22px;font-weight:700;letter-spacing:-0.03em;">주문 요약</h3>
+              <div style="margin-top:20px;display:flex;flex-direction:column;gap:14px;font-size:14px;color:rgba(255,255,255,0.65);">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.08);">
+                  <span>패키지</span>
+                  <strong id="summaryPackage" style="color:#fff;text-align:right;max-width:160px;">선택 안함</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.08);">
+                  <span>추가 옵션</span>
+                  <strong id="summaryOption" style="color:#fff;text-align:right;max-width:160px;">없음</strong>
+                </div>
+                <div id="summaryDiscountRow" style="display:none;justify-content:space-between;align-items:flex-start;gap:12px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.08);">
+                  <span>학생 할인</span>
+                  <strong id="summaryDiscount" style="color:#34d399;text-align:right;">–0원</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+                  <span>총 금액</span>
+                  <strong id="summaryTotal" style="color:#fff;font-size:24px;font-weight:700;letter-spacing:-0.03em;">0원</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /grid -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Confirm modal -->
+  <div id="confirmModal" style="display:none;" class="modal-overlay">
+    <div class="modal-box">
+      <h3 style="font-size:22px;font-weight:700;letter-spacing:-0.03em;">작성한 정보가 맞을까요?</h3>
+      <div id="confirmSummary" style="margin-top:18px;font-size:14px;line-height:1.9;color:#374151;"></div>
+      <div style="display:flex;gap:10px;margin-top:24px;">
+        <button id="cancelConfirmBtn" class="btn btn-outline" style="flex:1;min-height:48px;font-size:14px;">취소</button>
+        <button id="okConfirmBtn" class="btn btn-blue" style="flex:1;min-height:48px;font-size:14px;">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy modal -->
+  <div id="privacyModal" style="display:none;" class="modal-overlay">
+    <div class="modal-box">
+      <h3 style="font-size:22px;font-weight:700;letter-spacing:-0.03em;">개인정보 이용에 동의해주세요</h3>
+      <div style="margin-top:16px;background:#f5f5f7;border-radius:14px;padding:18px;font-size:14px;line-height:1.8;color:#6e6e73;">
+        구매 신청 확인, 입금 안내, 이후 문자 연락을 위해 이름, 전화번호, 이메일, 신청 정보를 수집·이용합니다.
+      </div>
+      <label style="display:flex;align-items:flex-start;gap:10px;margin-top:16px;cursor:pointer;font-size:14px;color:#374151;">
+        <input id="privacyAgree" type="checkbox" style="width:18px;height:18px;accent-color:#0071e3;flex-shrink:0;margin-top:2px;" />
+        <span>개인정보 수집 및 이용에 동의합니다.</span>
+      </label>
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        <button id="cancelPrivacyBtn" class="btn btn-outline" style="flex:1;min-height:48px;font-size:14px;">취소</button>
+        <button id="okPrivacyBtn" class="btn btn-blue" style="flex:1;min-height:48px;font-size:14px;">동의하고 계속</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment modal -->
+  <div id="paymentModal" style="display:none;" class="modal-overlay">
+    <div class="modal-box">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:#e8f1ff;display:flex;align-items:center;justify-content:center;font-size:20px;">💳</div>
+        <h3 style="font-size:22px;font-weight:700;letter-spacing:-0.03em;">입금 안내</h3>
+      </div>
+      <div style="margin-top:20px;background:#f5f5f7;border-radius:16px;padding:22px;">
+        <div style="display:grid;gap:12px;">
+          <div><p style="font-size:12px;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">은행명</p><p id="paymentBank" style="font-size:18px;font-weight:700;margin-top:4px;"></p></div>
+          <div><p style="font-size:12px;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">계좌번호</p><p id="paymentAccount" style="font-size:18px;font-weight:700;margin-top:4px;"></p></div>
+          <div><p style="font-size:12px;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">예금주</p><p id="paymentHolder" style="font-size:18px;font-weight:700;margin-top:4px;"></p></div>
+          <div style="padding-top:12px;border-top:1px solid rgba(0,0,0,0.07);">
+            <p style="font-size:12px;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">입금 금액</p>
+            <p id="paymentAmount" style="font-size:28px;font-weight:700;color:#0071e3;letter-spacing:-0.03em;margin-top:4px;"></p>
+          </div>
+        </div>
+      </div>
+      <p id="paymentNotice" style="margin-top:14px;font-size:13px;color:#6e6e73;line-height:1.7;"></p>
+      <details style="margin-top:14px;background:#f5f5f7;border-radius:12px;padding:14px 18px;">
+        <summary style="font-size:13px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+          <span>환불 규정 보기</span>
+          <span style="font-size:11px;color:#9ca3af;">▼</span>
+        </summary>
+        <div style="margin-top:12px;font-size:13px;color:#6e6e73;line-height:1.8;">
+          · 작업 착수 전: 전액 환불 가능합니다.<br />
+          · 작업 착수 후: 진행률에 따라 부분 환불됩니다.<br />
+          · 결과물 전달 완료 후에는 환불이 불가합니다.<br />
+          · 허위 할인 신청이 확인된 경우 주문이 취소되며, 차액 결제 또는 환불 처리될 수 있습니다.
+        </div>
+      </details>
+      <button id="closePaymentBtn" class="btn btn-blue" style="width:100%;margin-top:20px;min-height:52px;font-size:15px;">확인</button>
+    </div>
+  </div>
+
+  <footer style="border-top:1px solid rgba(0,0,0,0.07);padding:24px 0 40px;">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#9ca3af;">
+      <span data-bind="global.contactLabel">SKR Studio</span>
+      <span data-bind="global.contactSubLabel">컴카드 · 프로필 · 포트폴리오 제작</span>
+    </div>
+  </footer>
+
+  <style>
+    @media (max-width: 960px) {
+      #wizardGrid { grid-template-columns: 1fr !important; }
+    }
+    @media (max-width: 560px) {
+      #packageCards { grid-template-columns: 1fr !important; }
+      #optionCards { grid-template-columns: 1fr !important; }
+    }
+  </style>
+
+  <script>
+  (function () {
+    const content = window.getSkrContent();
+
+    document.querySelectorAll('[data-bind]').forEach((node) => {
+      const path = node.getAttribute('data-bind');
+      const value = path.split('.').reduce((a, k) => (a ? a[k] : ''), content) || '';
+      if (node.hasAttribute('data-multiline')) node.innerHTML = String(value).replace(/\n/g, '<br />');
+      else node.textContent = value;
+    });
+
+    // ── State ──
+    const state = {
+      step: 1,
+      pkg: (content.order.packages || [])[0] || null,
+      options: [],
+      isStudent: false,
+    };
+
+    function parsePrice(v) {
+      const n = String(v || '').replace(/[^0-9]/g, '');
+      return n ? Number(n) : 0;
+    }
+    function formatPrice(n) {
+      return `${n.toLocaleString('ko-KR')}원`;
+    }
+    function getPaidOptions() {
+      return state.options.filter((o) => o.id !== 'none');
+    }
+    function getStudentDiscount() {
+      return state.isStudent;
+    }
+    function getOptionPrice(opt) {
+      const base = parsePrice(opt.price);
+      return (opt.id !== 'none' && getStudentDiscount()) ? Math.round(base * 0.9) : base;
+    }
+    function getDiscountAmount() {
+      if (!getStudentDiscount()) return 0;
+      return getPaidOptions().reduce((s, o) => s + (parsePrice(o.price) - getOptionPrice(o)), 0);
+    }
+    function getTotalPrice() {
+      return parsePrice(state.pkg?.price || '0') + getPaidOptions().reduce((s, o) => s + getOptionPrice(o), 0);
+    }
+    function getOptionNames() {
+      const list = getPaidOptions();
+      return list.length ? list.map((o) => o.name).join(', ') : '없음';
+    }
+
+    // ── Step indicator ──
+    function renderSteps() {
+      const track = document.getElementById('stepsTrack');
+      track.innerHTML = '';
+      const labels = ['패키지', '옵션', '할인', '정보', '확인'];
+      labels.forEach((label, i) => {
+        const n = i + 1;
+        const isActive = n === state.step;
+        const isDone = n < state.step;
+
+        if (i > 0) {
+          const line = document.createElement('div');
+          line.className = 'step-connector' + (isDone ? ' done' : '');
+          track.appendChild(line);
+        }
+
+        const item = document.createElement('div');
+        item.className = 'step-item' + (isActive ? ' active' : isDone ? ' done' : '');
+        item.innerHTML = `
+          <div class="step-circle">${isDone ? '✓' : n}</div>
+          <div class="step-label">${label}</div>
+        `;
+        item.style.cursor = isDone ? 'pointer' : 'default';
+        if (isDone) item.addEventListener('click', () => wizard.go(n));
+        track.appendChild(item);
+      });
+    }
+
+    // ── Panels ──
+    function renderPanels() {
+      for (let i = 1; i <= 5; i++) {
+        const p = document.getElementById('panel' + i);
+        if (p) p.style.display = i === state.step ? '' : 'none';
+      }
+      if (state.step === 5) renderFinalSummary();
+    }
+
+    // ── Package cards ──
+    function renderPackageCards() {
+      const container = document.getElementById('packageCards');
+      container.innerHTML = '';
+      (content.order.packages || []).forEach((pkg) => {
+        const active = state.pkg?.id === pkg.id;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'sel-card' + (active ? ' selected' : '');
+        btn.style.cssText = 'width:100%;';
+        btn.innerHTML = `
+          <p style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${active?'#0071e3':'#9ca3af'};">${pkg.id==='student'?'학생 전용':pkg.id==='basic'?'기본형':'개성 중심'}</p>
+          <h3 style="margin-top:10px;font-size:26px;font-weight:700;letter-spacing:-0.04em;">${pkg.name}</h3>
+          <p style="margin-top:8px;font-size:13px;line-height:1.6;color:#6e6e73;">${pkg.desc}</p>
+          ${pkg.note ? `<p style="margin-top:6px;font-size:11px;font-weight:600;color:#0071e3;">${pkg.note}</p>` : ''}
+          <p style="margin-top:16px;font-size:28px;font-weight:700;letter-spacing:-0.04em;">${pkg.price}</p>
+        `;
+        btn.addEventListener('click', () => {
+          state.pkg = pkg;
+          renderAll();
+        });
+        container.appendChild(btn);
+      });
+    }
+
+    // ── Option cards ──
+    function renderOptionCards() {
+      const container = document.getElementById('optionCards');
+      container.innerHTML = '';
+      (content.order.options || []).forEach((opt) => {
+        const active = state.options.some((o) => o.id === opt.id) || (opt.id === 'none' && state.options.length === 0);
+        const disc = opt.id !== 'none' && getStudentDiscount();
+        const displayPrice = disc
+          ? `<span style="text-decoration:line-through;color:#c0c0c8;font-size:16px;">${opt.price}</span>&nbsp;<span style="color:#0071e3;">${formatPrice(getOptionPrice(opt))}</span>`
+          : `<span>${opt.price}</span>`;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'sel-card' + (active ? ' selected' : '');
+        btn.style.cssText = 'width:100%;';
+        btn.innerHTML = `
+          <h3 style="font-size:17px;font-weight:600;letter-spacing:-0.02em;">${opt.name}</h3>
+          <p style="margin-top:6px;font-size:13px;line-height:1.6;color:#6e6e73;">${opt.desc}</p>
+          <p style="margin-top:14px;font-size:22px;font-weight:700;letter-spacing:-0.03em;">${displayPrice}</p>
+        `;
+        btn.addEventListener('click', () => {
+          if (opt.id === 'none') {
+            state.options = [];
+          } else {
+            state.options = state.options.filter((o) => o.id !== 'none');
+            const exists = state.options.some((o) => o.id === opt.id);
+            state.options = exists ? state.options.filter((o) => o.id !== opt.id) : [...state.options, opt];
+          }
+          renderAll();
+        });
+        container.appendChild(btn);
+      });
+    }
+
+    // ── Student step ──
+    function renderStudentStep() {
+      const check = document.getElementById('studentCheck');
+      check.checked = state.isStudent;
+    }
+
+    // ── Summary sidebar ──
+    function renderSummary() {
+      document.getElementById('summaryPackage').textContent = state.pkg?.name || '선택 안함';
+      document.getElementById('summaryOption').textContent = getOptionNames();
+      const disc = getDiscountAmount();
+      const discRow = document.getElementById('summaryDiscountRow');
+      discRow.style.display = disc > 0 ? 'flex' : 'none';
+      document.getElementById('summaryDiscount').textContent = `–${formatPrice(disc)}`;
+      document.getElementById('summaryTotal').textContent = formatPrice(getTotalPrice());
+    }
+
+    // ── Final summary ──
+    function renderFinalSummary() {
+      const el = document.getElementById('finalSummary');
+      const v = (id) => document.getElementById(id)?.value || '-';
+      const disc = getDiscountAmount();
+      el.innerHTML = `
+        <div style="display:grid;gap:6px;">
+          ${[['이름',v('buyerName')],['전화번호',v('buyerPhone')],['이메일',v('buyerEmail')],['신청자 유형',v('buyerType')],['입금자명',v('buyerDepositorName')],['환불 계좌',v('buyerRefundAccount')+' ('+v('buyerRefundHolder')+')'],['선택 패키지',state.pkg?.name||'선택 안함'],['추가 옵션',getOptionNames()]].map(([k,val])=>`<div style="display:flex;gap:8px;"><span style="color:#6e6e73;min-width:100px;flex-shrink:0;">${k}</span><strong>${val}</strong></div>`).join('')}
+          ${disc>0?`<div style="display:flex;gap:8px;"><span style="color:#6e6e73;min-width:100px;flex-shrink:0;">학생 할인</span><strong style="color:#1a9655;">–${formatPrice(disc)}</strong></div>`:''}
+          <div style="display:flex;gap:8px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.08);margin-top:6px;"><span style="color:#6e6e73;min-width:100px;flex-shrink:0;">총 금액</span><strong style="font-size:20px;letter-spacing:-0.03em;color:#0071e3;">${formatPrice(getTotalPrice())}</strong></div>
+        </div>
+      `;
+    }
+
+    function renderAll() {
+      renderSteps();
+      renderPanels();
+      renderPackageCards();
+      renderOptionCards();
+      renderStudentStep();
+      renderSummary();
+    }
+
+    window.wizard = {
+      go(n) {
+        state.step = n;
+        renderAll();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+      updateStudent(val) {
+        state.isStudent = val;
+        renderAll();
+      },
+      toggleOptional() {
+        const f = document.getElementById('optionalFields');
+        const icon = document.getElementById('optionalToggleIcon');
+        const hidden = f.style.display === 'none' || f.style.display === '';
+        f.style.display = hidden ? 'block' : 'none';
+        // re-grid
+        if (hidden) {
+          f.style.cssText = 'margin-top:16px;';
+          const inner = f.querySelector('#optionalInner');
+        }
+        icon.textContent = hidden ? '－' : '＋';
+      }
+    };
+
+    // ── Orders ──
+    function getOrders() { try { return JSON.parse(localStorage.getItem('skr-site-orders-v1')||'[]'); } catch { return []; } }
+    function setOrders(o) { localStorage.setItem('skr-site-orders-v1', JSON.stringify(o)); }
+
+    // ── Submit flow ──
+    document.getElementById('submitOrderBtn').addEventListener('click', () => {
+      const v = (id) => document.getElementById(id)?.value?.trim() || '';
+      if (!v('buyerName')||!v('buyerPhone')||!v('buyerEmail')||!document.getElementById('buyerType').value||!v('buyerDepositorName')||!v('buyerRefundAccount')||!v('buyerRefundHolder')) {
+        alert('필수 항목을 모두 입력해주세요.');
+        return;
+      }
+      const disc = getDiscountAmount();
+      document.getElementById('confirmSummary').innerHTML = `
+        <div style="display:grid;gap:5px;">
+          ${[['이름',v('buyerName')],['전화번호',v('buyerPhone')],['이메일',v('buyerEmail')],['유형',document.getElementById('buyerType').value||'-'],['입금자명',v('buyerDepositorName')],['패키지',state.pkg?.name||'없음'],['추가 옵션',getOptionNames()]].map(([k,val])=>`<div><strong>${k}:</strong> ${val}</div>`).join('')}
+          ${disc>0?`<div><strong>학생 할인:</strong> –${formatPrice(disc)}</div>`:''}
+          <div style="padding-top:8px;margin-top:4px;border-top:1px solid #e5e7eb;font-size:16px;"><strong>총 금액: ${formatPrice(getTotalPrice())}</strong></div>
+        </div>
+      `;
+      const m = document.getElementById('confirmModal');
+      m.style.display = 'flex';
+    });
+
+    document.getElementById('cancelConfirmBtn').addEventListener('click', () => { document.getElementById('confirmModal').style.display = 'none'; });
+    document.getElementById('okConfirmBtn').addEventListener('click', () => {
+      document.getElementById('confirmModal').style.display = 'none';
+      document.getElementById('privacyAgree').checked = false;
+      document.getElementById('privacyModal').style.display = 'flex';
+    });
+    document.getElementById('cancelPrivacyBtn').addEventListener('click', () => { document.getElementById('privacyModal').style.display = 'none'; });
+    document.getElementById('okPrivacyBtn').addEventListener('click', () => {
+      if (!document.getElementById('privacyAgree').checked) { alert('개인정보 이용동의에 체크해줘야 계속 진행할 수 있어.'); return; }
+      document.getElementById('privacyModal').style.display = 'none';
+      const v = (id) => document.getElementById(id)?.value || '';
+      const orders = getOrders();
+      orders.push({
+        createdAt: new Date().toLocaleString('ko-KR'),
+        name: v('buyerName'), phone: v('buyerPhone'), email: v('buyerEmail'),
+        type: v('buyerType'), depositorName: v('buyerDepositorName'),
+        refundAccount: v('buyerRefundAccount'), refundHolder: v('buyerRefundHolder'),
+        instagram: v('buyerInstagram'), agency: v('buyerAgency'), note: v('buyerNote'),
+        packageName: state.pkg?.name||'', optionNames: getOptionNames(),
+        studentDiscount: getStudentDiscount(), discountAmount: formatPrice(getDiscountAmount()),
+        totalPrice: formatPrice(getTotalPrice()), agreedPrivacy: true
+      });
+      setOrders(orders);
+      document.getElementById('paymentBank').textContent = content.global.bankName||'';
+      document.getElementById('paymentAccount').textContent = content.global.accountNumber||'';
+      document.getElementById('paymentHolder').textContent = content.global.accountHolder||'';
+      document.getElementById('paymentAmount').textContent = formatPrice(getTotalPrice());
+      document.getElementById('paymentNotice').textContent = content.global.paymentNotice||'';
+      document.getElementById('paymentModal').style.display = 'flex';
+    });
+    document.getElementById('closePaymentBtn').addEventListener('click', () => {
+      document.getElementById('paymentModal').style.display = 'none';
+      window.location.href = './index.html';
+    });
+
+    renderAll();
+  })();
+  </script>
+</body>
+</html>

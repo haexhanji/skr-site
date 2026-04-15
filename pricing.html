@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SKR — 패키지 · 가격</title>
+  <meta name="description" content="SKR 패키지 · 가격 페이지" />
+  <link rel="stylesheet" href="./style.css" />
+  <script src="./site-data.js"></script>
+  <style>
+    :root {
+      --bg: #fbfbfd;
+      --ink: #1d1d1f;
+      --muted: #86868b;
+      --link: #0071e3;
+      --accent: #ff6a3d;
+      --rule: rgba(0,0,0,0.08);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Pretendard', 'SF Pro KR', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      word-break: keep-all;
+    }
+    body { margin: 0; }
+    a { color: inherit; text-decoration: none; }
+
+    .nav {
+      position: sticky; top: 0; z-index: 60;
+      background: rgba(251,251,253,0.72);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--rule);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; flex-wrap: wrap; padding: 8px 0; }
+    .nav-brand { font-weight: 700; font-size: 19px; letter-spacing: -0.02em; color: var(--ink); }
+    .nav-links { display: flex; gap: 22px; font-size: 13px; font-weight: 500; color: var(--ink); flex-wrap: wrap; justify-content: flex-end; }
+    .nav-links a { opacity: .75; transition: opacity .15s; }
+    .nav-links a:hover { opacity: 1; }
+    .nav-links a.active { opacity: 1; color: var(--link); font-weight: 600; }
+
+    .wrap { width: min(1120px, calc(100% - 44px)); margin: 0 auto; }
+
+    .body-copy { font-size: 17px; line-height: 1.6; color: var(--muted); letter-spacing: -0.01em; }
+
+    /* Trust strip */
+    .trust-strip {
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 22px 0;
+      display: flex; justify-content: center; flex-wrap: wrap;
+      gap: 36px; align-items: center;
+      font-size: 14px; color: var(--ink); font-weight: 500;
+    }
+    .trust-strip .dot { width: 6px; height: 6px; border-radius: 50%; background: #34c759; display: inline-block; margin-right: 8px; animation: pulseDot 1.6s ease-in-out infinite; }
+    @keyframes pulseDot { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .5; transform: scale(.75); } }
+    .trust-strip strong { font-weight: 700; letter-spacing: -0.02em; }
+    .trust-strip .sep { color: rgba(0,0,0,0.15); }
+    .trust-strip .star { color: #ff9500; letter-spacing: 1px; margin-right: 4px; }
+
+    /* Detail images */
+    .detail-wrap { width: min(900px, calc(100% - 44px)); margin: 56px auto 120px; }
+    #detailStack img { display: block; width: 100%; height: auto; }
+    #detailEmpty {
+      padding: 80px 24px; text-align: center;
+      border: 1px dashed var(--rule); border-radius: 20px; background: #fff;
+    }
+
+    /* Float ask */
+    .float-ask {
+      position: fixed; right: 24px; bottom: 24px; z-index: 80;
+      display: flex; flex-direction: column; gap: 10px; align-items: flex-end;
+    }
+    .float-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 22px; border-radius: 999px;
+      font-size: 14px; font-weight: 700; letter-spacing: -0.01em;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+      transition: transform .18s;
+    }
+    .float-btn:hover { transform: translateY(-2px); }
+    .float-btn.kakao { background: #fee500; color: #111; }
+    .float-btn.order { background: var(--ink); color: #fff; }
+
+    /* Footer */
+    .footer {
+      background: #f5f5f7;
+      padding: 36px 0 28px;
+      font-size: 12px; color: var(--muted); line-height: 1.6;
+      border-top: 1px solid var(--rule);
+    }
+    .footer-inner { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+    @media (max-width: 560px) {
+      .nav-links { gap: 14px; font-size: 12px; }
+      .trust-strip { gap: 14px; font-size: 12px; padding: 18px 0; }
+      .trust-strip .sep { display: none; }
+      .detail-wrap { margin: 36px auto 140px; }
+      .float-ask { right: 12px; bottom: 12px; gap: 8px; }
+      .float-btn { padding: 11px 16px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a href="./index.html" class="nav-brand" data-bind="global.brandName">SKR</a>
+      <nav class="nav-links">
+        <a href="./index.html" data-bind="global.navHome">홈</a>
+        <a href="./pricing.html" class="active" data-bind="global.navPricing">가격</a>
+        <a href="./faq.html" data-bind="global.navFaq">자주 묻는 질문</a>
+        <a href="./order.html" data-bind="global.navOrder">구매</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section style="padding-top:64px;">
+      <div class="wrap">
+        <div class="trust-strip">
+          <span><span class="dot"></span><span data-bind="pricing.trustLive">실시간 12명 상담중</span></span>
+          <span class="sep">·</span>
+          <span data-bind="pricing.trustRating">★ 5.0 (48)</span>
+          <span class="sep">·</span>
+          <span data-bind="pricing.trustCount">누적 제작 300+</span>
+          <span class="sep">·</span>
+          <span data-bind="pricing.trustNotice">무통장 즉시 확인</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="detail-wrap">
+      <div id="detailEmpty" style="display:none;">
+        <p class="body-copy" style="margin:0;">상세페이지 이미지를 관리자에서 업로드하면 이 영역에 순서대로 표시됩니다.</p>
+      </div>
+      <div id="detailStack"></div>
+    </section>
+  </main>
+
+  <div class="float-ask">
+    <a href="#" class="float-btn kakao"><span>💬</span><span data-bind="global.floatKakaoText">카톡 상담</span></a>
+    <a href="./order.html" class="float-btn order"><span>🛒</span><span data-bind="global.floatOrderText">바로 구매</span></a>
+  </div>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <span data-bind="global.contactLabel">SKR Studio</span>
+      <span data-bind="global.contactSubLabel">컴카드 · 프로필 · 포트폴리오 제작</span>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const content = window.getSkrContent();
+
+      document.querySelectorAll('[data-bind]').forEach((node) => {
+        const path = node.getAttribute('data-bind');
+        const value = path.split('.').reduce((a, k) => (a ? a[k] : ''), content) || '';
+        node.textContent = value;
+      });
+
+      const images = content.pricing.images || [];
+      const stack = document.getElementById('detailStack');
+      const empty = document.getElementById('detailEmpty');
+      if (!images.length) {
+        empty.style.display = 'block';
+      } else {
+        images.forEach((img) => {
+          const el = document.createElement('img');
+          el.src = img.src;
+          el.alt = img.caption || '';
+          el.loading = 'lazy';
+          stack.appendChild(el);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

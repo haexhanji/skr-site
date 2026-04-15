@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SKR Admin</title>
+  <link rel="stylesheet" href="../style.css" />
+  <script src="../site-data.js"></script>
+</head>
+<body style="background:#f0f0f2;color:#1d1d1f;">
+
+<!-- Password gate -->
+<div id="authGate" style="display:none;position:fixed;inset:0;background:#1d1d1f;z-index:9999;display:flex;align-items:center;justify-content:center;">
+  <div style="background:#2a2a2d;border-radius:24px;padding:40px 44px;width:100%;max-width:380px;text-align:center;">
+    <p style="font-size:12px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.35);text-transform:uppercase;">SKR</p>
+    <h1 style="margin-top:12px;font-size:24px;font-weight:700;color:#fff;letter-spacing:-0.03em;">Admin</h1>
+    <p style="margin-top:8px;font-size:14px;color:rgba(255,255,255,0.45);">관리자 비밀번호를 입력하세요.</p>
+    <input id="pwInput" type="password" class="form-input" placeholder="비밀번호" style="margin-top:24px;background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.1);color:#fff;text-align:center;font-size:18px;letter-spacing:0.1em;" />
+    <p id="pwError" style="margin-top:10px;font-size:13px;color:#f87171;display:none;">비밀번호가 올바르지 않습니다.</p>
+    <button id="pwSubmit" class="btn btn-blue" style="margin-top:16px;width:100%;min-height:52px;font-size:15px;">입장하기</button>
+  </div>
+</div>
+
+<!-- Admin body (hidden until auth) -->
+<div id="adminBody" style="display:none;">
+
+  <!-- Sidebar layout -->
+  <div style="display:grid;grid-template-columns:240px 1fr;min-height:100vh;" id="adminLayout">
+
+    <!-- Sidebar -->
+    <aside style="background:#1d1d1f;color:#fff;padding:32px 20px;position:sticky;top:0;height:100vh;overflow-y:auto;flex-shrink:0;">
+      <div style="margin-bottom:32px;">
+        <p class="eyebrow" style="color:rgba(255,255,255,0.35);">SKR</p>
+        <h1 style="margin-top:8px;font-size:18px;font-weight:700;color:#fff;letter-spacing:-0.02em;">Admin</h1>
+        <p style="margin-top:6px;font-size:12px;color:rgba(255,255,255,0.4);">콘텐츠 관리자</p>
+      </div>
+      <nav style="display:flex;flex-direction:column;gap:4px;">
+        <a href="#global" style="padding:9px 12px;border-radius:10px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);">글로벌 설정</a>
+        <a href="#orders" style="padding:9px 12px;border-radius:10px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);">구매 신청 내역</a>
+        <a href="#homeSection" style="padding:9px 12px;border-radius:10px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);">메인 페이지</a>
+        <a href="#pricingSection" style="padding:9px 12px;border-radius:10px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);">가격 페이지</a>
+        <a href="#faqSection" style="padding:9px 12px;border-radius:10px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);">자주 묻는 질문</a>
+        <a href="#orderSection" style="padding:9px 12px;border-radius:10px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);">구매 페이지</a>
+        <div style="height:1px;background:rgba(255,255,255,0.08);margin:8px 0;"></div>
+        <a href="../index.html" target="_blank" style="padding:9px 12px;border-radius:10px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.4);">↗ 사이트 보기</a>
+      </nav>
+      <div style="margin-top:32px;display:flex;flex-direction:column;gap:8px;">
+        <button id="resetBtn" style="width:100%;padding:10px;border-radius:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.55);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">콘텐츠 초기화</button>
+        <button id="logoutBtn" style="width:100%;padding:10px;border-radius:12px;background:transparent;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.3);font-size:13px;cursor:pointer;font-family:inherit;">로그아웃</button>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main style="padding:32px 32px 80px;overflow-y:auto;">
+      <div style="max-width:900px;">
+        <form id="adminForm" style="display:flex;flex-direction:column;gap:20px;">
+
+          <!-- 글로벌 -->
+          <section id="global" style="background:#fff;border-radius:20px;padding:28px;border:1px solid rgba(0,0,0,0.07);">
+            <h2 style="font-size:17px;font-weight:700;letter-spacing:-0.02em;margin-bottom:20px;">글로벌 설정</h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>브랜드명</span><input name="global.brandName" class="form-input" /></label>
+              <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>메인 CTA 문구</span><input name="global.primaryCta" class="form-input" /></label>
+              <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>은행명</span><input name="global.bankName" class="form-input" /></label>
+              <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>계좌번호</span><input name="global.accountNumber" class="form-input" /></label>
+              <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;grid-column:span 2;"><span>예금주</span><input name="global.accountHolder" class="form-input" /></label>
+              <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;grid-column:span 2;"><span>입금 안내 문구</span><textarea name="global.paymentNotice" rows="2" class="form-input" style="resize:vertical;"></textarea></label>
+            </div>
+
+            <div style="background:#f8f8fa;border-radius:14px;padding:16px;margin-top:16px;">
+              <h3 style="font-size:13px;font-weight:700;margin-bottom:12px;">네비게이션 · 플로팅 버튼 (전 페이지 공통)</h3>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>메뉴 · 홈</span><input name="global.navHome" class="form-input" /></label>
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>메뉴 · 가격</span><input name="global.navPricing" class="form-input" /></label>
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>메뉴 · 구매</span><input name="global.navOrder" class="form-input" /></label>
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>메뉴 · 자주 묻는 질문</span><input name="global.navFaq" class="form-input" /></label>
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>플로팅 · 카톡 버튼</span><input name="global.floatKakaoText" class="form-input" /></label>
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>플로팅 · 구매 버튼</span><input name="global.floatOrderText" class="form-input" /></label>
+              </div>
+            </div>
+          </section>
+
+          <!-- 구매 신청 내역 -->
+          <section id="orders" style="background:#fff;border-radius:20px;padding:28px;border:1px solid rgba(0,0,0,0.07);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+              <h2 style="font-size:17px;font-weight:700;letter-spacing:-0.02em;">구매 신청 내역</h2>
+              <button type="button" id="clearOrdersBtn" style="padding:8px 16px;border-radius:10px;border:1.5px solid #fecaca;background:#fff5f5;color:#dc2626;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">전체 삭제</button>
+            </div>
+            <div id="orderSubmissionList"></div>
+          </section>
+
+          <!-- 메인 페이지 -->
+          <section id="homeSection" style="background:#fff;border-radius:20px;padding:28px;border:1px solid rgba(0,0,0,0.07);">
+            <h2 style="font-size:17px;font-weight:700;letter-spacing:-0.02em;margin-bottom:20px;">메인 페이지</h2>
+
+            <!-- 히어로 -->
+            <div style="background:#f8f8fa;border-radius:14px;padding:16px;margin-bottom:16px;">
+              <h3 style="font-size:13px;font-weight:700;margin-bottom:12px;">히어로 섹션</h3>
+              <div style="display:grid;gap:12px;">
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>상단 뱃지 문구 (eyebrow)</span><input name="home.heroEyebrow" class="form-input" placeholder="SKR Studio" /></label>
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>히어로 제목 (줄바꿈 허용)</span><textarea name="home.heroTitle" rows="2" class="form-input" style="resize:vertical;" placeholder="프로페셔널의&#10;첫 장면."></textarea></label>
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>히어로 설명</span><textarea name="home.heroDesc" rows="3" class="form-input" style="resize:vertical;"></textarea></label>
+              </div>
+            </div>
+
+            <!-- 히어로 버튼 & 사이드 레일 -->
+            <div style="background:#f8f8fa;border-radius:14px;padding:16px;margin-bottom:16px;">
+              <h3 style="font-size:13px;font-weight:700;margin-bottom:12px;">버튼 문구</h3>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>히어로 버튼1 (메인)</span><input name="home.heroCta1" class="form-input" /></label>
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>히어로 버튼2 (링크)</span><input name="home.heroCta2" class="form-input" /></label>
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>우측 사이드 레일 CTA</span><input name="home.ctaButton" class="form-input" placeholder="가격 보기" /></label>
+              </div>
+            </div>
+
+            <!-- 홈 상세 이미지 (히어로 아래 스택) -->
+            <div style="background:#f8f8fa;border-radius:14px;padding:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <h3 style="font-size:13px;font-weight:700;">홈 상세 이미지 (히어로 아래 표시)</h3>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <input id="homeDetailImgFile" type="file" accept="image/*" multiple style="display:none;" />
+                  <button type="button" id="addHomeDetailImgBtn" style="padding:7px 14px;border-radius:8px;background:#0071e3;color:#fff;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;">+ 이미지 추가</button>
+                </div>
+              </div>
+              <p style="margin-bottom:14px;font-size:12px;color:#9ca3af;">이미지를 클릭하면 삭제됩니다. 위에서 아래로 순서대로 표시됩니다.</p>
+              <div id="homeDetailImgList" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;"></div>
+              <div id="homeDetailImgEmpty" style="padding:24px;text-align:center;font-size:13px;color:#9ca3af;">등록된 이미지가 없습니다.</div>
+            </div>
+          </section>
+
+          <!-- 가격 페이지 -->
+          <section id="pricingSection" style="background:#fff;border-radius:20px;padding:28px;border:1px solid rgba(0,0,0,0.07);">
+            <h2 style="font-size:17px;font-weight:700;letter-spacing:-0.02em;margin-bottom:20px;">가격 페이지</h2>
+
+            <!-- 상단 trust strip 멘트 -->
+            <div style="background:#f8f8fa;border-radius:14px;padding:16px;margin-bottom:16px;">
+              <h3 style="font-size:13px;font-weight:700;margin-bottom:12px;">상단 안내 문구 (Trust Strip · 4개 항목)</h3>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>1. 실시간 상담</span><input name="pricing.trustLive" class="form-input" placeholder="실시간 12명 상담중" /></label>
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>2. 평점</span><input name="pricing.trustRating" class="form-input" placeholder="★ 5.0 (48)" /></label>
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>3. 누적 제작</span><input name="pricing.trustCount" class="form-input" placeholder="누적 제작 300+" /></label>
+                <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>4. 기타 안내</span><input name="pricing.trustNotice" class="form-input" placeholder="무통장 즉시 확인" /></label>
+              </div>
+            </div>
+
+            <!-- 상세페이지 이미지 관리 -->
+            <div style="background:#f8f8fa;border-radius:14px;padding:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <h3 style="font-size:14px;font-weight:700;">상세페이지 이미지</h3>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <input id="pricingImgFile" type="file" accept="image/*" multiple style="display:none;" />
+                  <button type="button" id="addPricingImgBtn" style="padding:7px 14px;border-radius:8px;background:#0071e3;color:#fff;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;">+ 이미지 추가</button>
+                </div>
+              </div>
+              <p style="margin-bottom:14px;font-size:12px;color:#9ca3af;">위에서 아래로 순서대로 표시됩니다. 이미지를 클릭하면 삭제됩니다.</p>
+              <div id="pricingImgList" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;"></div>
+              <div id="pricingImgEmpty" style="padding:24px;text-align:center;font-size:13px;color:#9ca3af;">등록된 이미지가 없습니다. 이미지를 추가해주세요.</div>
+            </div>
+          </section>
+
+          <!-- 자주 묻는 질문 -->
+          <section id="faqSection" style="background:#fff;border-radius:20px;padding:28px;border:1px solid rgba(0,0,0,0.07);">
+            <h2 style="font-size:17px;font-weight:700;letter-spacing:-0.02em;margin-bottom:20px;">자주 묻는 질문</h2>
+            <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+              <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>히어로 제목</span><input name="faq.heroTitle" class="form-input" /></label>
+              <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>히어로 설명</span><textarea name="faq.heroText" rows="2" class="form-input" style="resize:vertical;"></textarea></label>
+            </div>
+
+            <div style="background:#f8f8fa;border-radius:14px;padding:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <h3 style="font-size:14px;font-weight:700;">질문 · 답변 목록</h3>
+                <button type="button" id="addFaqBtn" style="padding:7px 14px;border-radius:8px;background:#0071e3;color:#fff;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;">+ 추가</button>
+              </div>
+              <p style="margin-bottom:14px;font-size:12px;color:#9ca3af;">사이트에는 순서대로 표시됩니다.</p>
+              <div id="faqItemList" style="display:flex;flex-direction:column;gap:12px;"></div>
+            </div>
+          </section>
+
+          <!-- 구매 페이지 -->
+          <section id="orderSection" style="background:#fff;border-radius:20px;padding:28px;border:1px solid rgba(0,0,0,0.07);">
+            <h2 style="font-size:17px;font-weight:700;letter-spacing:-0.02em;margin-bottom:20px;">구매 페이지</h2>
+            <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+              <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>히어로 제목</span><textarea name="order.heroTitle" rows="2" class="form-input" style="resize:vertical;"></textarea></label>
+              <label style="display:grid;gap:6px;font-size:13px;font-weight:600;color:#6e6e73;"><span>히어로 설명</span><textarea name="order.heroText" rows="2" class="form-input" style="resize:vertical;"></textarea></label>
+            </div>
+
+            <!-- 패키지 -->
+            <div style="background:#f8f8fa;border-radius:14px;padding:16px;margin-bottom:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <h3 style="font-size:14px;font-weight:700;">패키지 목록</h3>
+                <button type="button" id="addPackageBtn" style="padding:7px 14px;border-radius:8px;background:#0071e3;color:#fff;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;">+ 추가</button>
+              </div>
+              <div id="packageList" style="display:flex;flex-direction:column;gap:12px;"></div>
+            </div>
+
+            <!-- 추가 옵션 -->
+            <div style="background:#f8f8fa;border-radius:14px;padding:16px;margin-bottom:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <h3 style="font-size:14px;font-weight:700;">추가 옵션 목록</h3>
+                <button type="button" id="addOptionBtn" style="padding:7px 14px;border-radius:8px;background:#0071e3;color:#fff;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;">+ 추가</button>
+              </div>
+              <div id="optionList" style="display:flex;flex-direction:column;gap:12px;"></div>
+            </div>
+
+            <!-- 촬영 패키지 -->
+            <div style="background:#f8f8fa;border-radius:14px;padding:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <h3 style="font-size:14px;font-weight:700;">직접 촬영 패키지</h3>
+                <button type="button" id="addShootingBtn" style="padding:7px 14px;border-radius:8px;background:#0071e3;color:#fff;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;">+ 추가</button>
+              </div>
+              <div id="shootingList" style="display:flex;flex-direction:column;gap:12px;"></div>
+            </div>
+          </section>
+
+          <!-- Save bar -->
+          <div style="position:sticky;bottom:20px;background:#fff;border:1px solid rgba(0,0,0,0.08);border-radius:16px;padding:16px 20px;display:flex;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,0.08);">
+            <button type="submit" class="btn btn-blue" style="min-height:44px;padding:0 28px;font-size:14px;">저장하기</button>
+            <span style="font-size:13px;color:#9ca3af;display:flex;align-items:center;">저장 후 사이트를 새로고침하면 반영됩니다.</span>
+          </div>
+
+        </form>
+      </div>
+    </main>
+
+  </div><!-- /adminBody -->
+</div>
+
+  <style>
+    @media (max-width: 860px) {
+      #adminLayout { grid-template-columns: 1fr !important; }
+      aside { position: static !important; height: auto !important; }
+    }
+    aside a:hover { background: rgba(255,255,255,0.08); }
+    #pricingImgList .img-thumb,
+    #portfolioImgList .img-thumb {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #e5e5ea;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: border-color .15s;
+    }
+    #pricingImgList .img-thumb:hover,
+    #portfolioImgList .img-thumb:hover { border-color: #f87171; }
+    #pricingImgList .img-thumb img,
+    #portfolioImgList .img-thumb img { display:block;width:100%;height:100px;object-fit:cover; }
+    #pricingImgList .img-thumb .del-badge {
+      position:absolute;top:6px;right:6px;background:rgba(220,38,38,0.9);color:#fff;
+      font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;opacity:0;transition:opacity .15s;
+    }
+    #pricingImgList .img-thumb:hover .del-badge { opacity:1; }
+    #pricingImgList .caption-input {
+      width:100%;box-sizing:border-box;margin-top:6px;padding:6px 8px;
+      border-radius:8px;border:1.5px solid rgba(0,0,0,0.08);
+      background:#fff;font-size:12px;font-family:inherit;outline:none;
+    }
+  </style>
+
+  <script>
+    /* ─── Auth ──────────────────────────────────────────────────── */
+    const AUTH_KEY = 'skr-admin-auth-v1';
+    const ADMIN_PASSWORD = 'skr2026';
+
+    const gate = document.getElementById('authGate');
+    const body = document.getElementById('adminBody');
+    const pwInput = document.getElementById('pwInput');
+    const pwError = document.getElementById('pwError');
+
+    function showAdmin() { gate.style.display = 'none'; body.style.display = 'block'; }
+    function showGate()  { body.style.display = 'none'; gate.style.display = 'flex'; }
+
+    if (localStorage.getItem(AUTH_KEY) === 'ok') {
+      showAdmin();
+    } else {
+      showGate();
+    }
+
+    document.getElementById('pwSubmit').addEventListener('click', checkPassword);
+    pwInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkPassword(); });
+    function checkPassword() {
+      if (pwInput.value === ADMIN_PASSWORD) {
+        localStorage.setItem(AUTH_KEY, 'ok');
+        pwError.style.display = 'none';
+        showAdmin();
+        initAdmin();
+      } else {
+        pwError.style.display = 'block';
+        pwInput.value = '';
+        pwInput.focus();
+      }
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem(AUTH_KEY);
+      showGate();
+      pwInput.value = '';
+    });
+
+    /* ─── Helpers ───────────────────────────────────────────────── */
+    function getDeep(obj, path) { return path.split('.').reduce((a, k) => (a ? a[k] : undefined), obj) ?? ''; }
+    function setDeep(obj, path, val) {
+      const keys = path.split('.');
+      let cur = obj;
+      keys.forEach((k, i) => {
+        if (i === keys.length - 1) cur[k] = val;
+        else { cur[k] = cur[k] || {}; cur = cur[k]; }
+      });
+    }
+
+    /* ─── Local state (avoids re-reading localStorage on every add/delete) */
+    let localPackages = [];
+    let localOptions  = [];
+    let localShooting = [];
+    let localPricingImages   = [];
+    let localHomeDetailImages = [];
+    let localFaq = [];
+
+    /* ─── Orders ─────────────────────────────────────────────────── */
+    function getOrders() { try { return JSON.parse(localStorage.getItem('skr-site-orders-v1') || '[]'); } catch { return []; } }
+
+    function renderOrders() {
+      const list = document.getElementById('orderSubmissionList');
+      const orders = getOrders();
+      list.innerHTML = '';
+      if (!orders.length) {
+        list.innerHTML = '<div style="padding:16px;background:#f8f8fa;border-radius:12px;font-size:13px;color:#9ca3af;">저장된 구매 신청 내역이 없습니다.</div>';
+        return;
+      }
+      orders.slice().reverse().forEach((order) => {
+        const card = document.createElement('div');
+        card.style.cssText = 'background:#f8f8fa;border-radius:14px;padding:16px;border:1px solid rgba(0,0,0,0.06);margin-bottom:10px;';
+        card.innerHTML = `
+          <p style="font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:0.08em;">${order.createdAt || ''}</p>
+          <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;font-size:13px;line-height:1.8;">
+            <div><strong>이름:</strong> ${order.name || ''}</div>
+            <div><strong>전화번호:</strong> ${order.phone || ''}</div>
+            <div><strong>이메일:</strong> ${order.email || ''}</div>
+            <div><strong>유형:</strong> ${order.type || ''}</div>
+            <div><strong>입금자명:</strong> ${order.depositorName || ''}</div>
+            <div><strong>패키지:</strong> ${order.packageName || ''}</div>
+            <div style="grid-column:span 2;"><strong>추가 옵션:</strong> ${order.optionNames || '없음'}</div>
+            ${order.studentDiscount ? `<div style="grid-column:span 2;"><strong>학생 할인:</strong> ${order.discountAmount || ''}</div>` : ''}
+            <div style="grid-column:span 2;padding-top:8px;border-top:1px solid rgba(0,0,0,0.07);margin-top:4px;"><strong>총 금액:</strong> <span style="color:#0071e3;font-size:15px;">${order.totalPrice || ''}</span></div>
+            ${order.note ? `<div style="grid-column:span 2;"><strong>요청사항:</strong> ${order.note}</div>` : ''}
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    /* ─── Collection renderers ──────────────────────────────────── */
+    function fieldStyle() {
+      return 'border-radius:10px;border:1.5px solid rgba(0,0,0,0.08);background:#fff;padding:10px 13px;font-size:13px;font-family:inherit;outline:none;width:100%;box-sizing:border-box;';
+    }
+
+    function renderPackages() {
+      const container = document.getElementById('packageList');
+      container.innerHTML = '';
+      localPackages.forEach((item, index) => {
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'background:#fff;border-radius:12px;padding:14px;border:1px solid rgba(0,0,0,0.07);display:grid;gap:10px;';
+        wrap.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <strong style="font-size:13px;font-weight:600;">패키지 ${index + 1}</strong>
+            <button type="button" data-action="del-package" data-index="${index}" style="padding:5px 10px;border-radius:7px;border:1.5px solid #fecaca;background:#fff5f5;color:#dc2626;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">삭제</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <input data-pkg-field="id" data-index="${index}" value="${esc(item.id)}" placeholder="id (영문)" style="${fieldStyle()}" />
+            <input data-pkg-field="name" data-index="${index}" value="${esc(item.name)}" placeholder="이름" style="${fieldStyle()}" />
+            <input data-pkg-field="price" data-index="${index}" value="${esc(item.price)}" placeholder="가격 (예: 54,000원)" style="${fieldStyle()}" />
+            <input data-pkg-field="note" data-index="${index}" value="${esc(item.note)}" placeholder="노트 (할인 안내 등)" style="${fieldStyle()}" />
+          </div>
+          <textarea data-pkg-field="desc" data-index="${index}" rows="2" placeholder="설명" style="${fieldStyle()} resize:vertical;">${esc(item.desc)}</textarea>
+        `;
+        container.appendChild(wrap);
+      });
+    }
+
+    function renderOptions() {
+      const container = document.getElementById('optionList');
+      container.innerHTML = '';
+      localOptions.forEach((item, index) => {
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'background:#fff;border-radius:12px;padding:14px;border:1px solid rgba(0,0,0,0.07);display:grid;gap:10px;';
+        wrap.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <strong style="font-size:13px;font-weight:600;">옵션 ${index + 1}</strong>
+            <button type="button" data-action="del-option" data-index="${index}" style="padding:5px 10px;border-radius:7px;border:1.5px solid #fecaca;background:#fff5f5;color:#dc2626;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">삭제</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <input data-opt-field="id" data-index="${index}" value="${esc(item.id)}" placeholder="id (영문)" style="${fieldStyle()}" />
+            <input data-opt-field="name" data-index="${index}" value="${esc(item.name)}" placeholder="이름" style="${fieldStyle()}" />
+            <input data-opt-field="price" data-index="${index}" value="${esc(item.price)}" placeholder="가격" style="grid-column:span 2;${fieldStyle()}" />
+          </div>
+          <textarea data-opt-field="desc" data-index="${index}" rows="2" placeholder="설명" style="${fieldStyle()} resize:vertical;">${esc(item.desc)}</textarea>
+        `;
+        container.appendChild(wrap);
+      });
+    }
+
+    function renderShooting() {
+      const container = document.getElementById('shootingList');
+      container.innerHTML = '';
+      localShooting.forEach((item, index) => {
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'background:#fff;border-radius:12px;padding:14px;border:1px solid rgba(0,0,0,0.07);display:grid;gap:10px;';
+        wrap.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <strong style="font-size:13px;font-weight:600;">촬영 패키지 ${index + 1}</strong>
+            <button type="button" data-action="del-shooting" data-index="${index}" style="padding:5px 10px;border-radius:7px;border:1.5px solid #fecaca;background:#fff5f5;color:#dc2626;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">삭제</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <input data-sh-field="id" data-index="${index}" value="${esc(item.id)}" placeholder="id (영문)" style="${fieldStyle()}" />
+            <input data-sh-field="name" data-index="${index}" value="${esc(item.name)}" placeholder="이름" style="${fieldStyle()}" />
+            <input data-sh-field="price" data-index="${index}" value="${esc(item.price)}" placeholder="가격" style="grid-column:span 2;${fieldStyle()}" />
+          </div>
+          <label style="display:grid;gap:6px;font-size:12px;font-weight:600;color:#9ca3af;">
+            구성 항목 (줄바꿈 구분)
+            <textarea data-sh-field="features" data-index="${index}" rows="5" placeholder="스튜디오 촬영&#10;보정본 2장&#10;원본 제공" style="${fieldStyle()} resize:vertical;">${esc(item.features)}</textarea>
+          </label>
+        `;
+        container.appendChild(wrap);
+      });
+    }
+
+    function renderFaq() {
+      const container = document.getElementById('faqItemList');
+      container.innerHTML = '';
+      localFaq.forEach((item, index) => {
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'background:#fff;border-radius:12px;padding:14px;border:1px solid rgba(0,0,0,0.07);display:grid;gap:10px;';
+        wrap.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <strong style="font-size:13px;font-weight:600;">Q ${index + 1}</strong>
+            <div style="display:flex;gap:6px;">
+              <button type="button" data-action="up-faq" data-index="${index}" style="padding:5px 10px;border-radius:7px;border:1.5px solid rgba(0,0,0,0.1);background:#fff;color:#6e6e73;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">↑</button>
+              <button type="button" data-action="down-faq" data-index="${index}" style="padding:5px 10px;border-radius:7px;border:1.5px solid rgba(0,0,0,0.1);background:#fff;color:#6e6e73;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">↓</button>
+              <button type="button" data-action="del-faq" data-index="${index}" style="padding:5px 10px;border-radius:7px;border:1.5px solid #fecaca;background:#fff5f5;color:#dc2626;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">삭제</button>
+            </div>
+          </div>
+          <input data-faq-field="q" data-index="${index}" value="${esc(item.q)}" placeholder="질문" style="${fieldStyle()}" />
+          <textarea data-faq-field="a" data-index="${index}" rows="3" placeholder="답변" style="${fieldStyle()} resize:vertical;">${esc(item.a)}</textarea>
+        `;
+        container.appendChild(wrap);
+      });
+    }
+
+    function renderHomeDetailImages() {
+      const list  = document.getElementById('homeDetailImgList');
+      const empty = document.getElementById('homeDetailImgEmpty');
+      list.innerHTML = '';
+      if (!localHomeDetailImages.length) { empty.style.display = 'block'; return; }
+      empty.style.display = 'none';
+      localHomeDetailImages.forEach((img, index) => {
+        const wrap = document.createElement('div');
+        wrap.innerHTML = `
+          <div class="img-thumb" data-action="del-home-detail-img" data-index="${index}">
+            <img src="${img.src}" alt="" />
+            <span class="del-badge">삭제</span>
+          </div>
+          <input class="caption-input" data-home-detail-caption="${index}" value="${esc(img.caption || '')}" placeholder="캡션 (선택)" />
+        `;
+        list.appendChild(wrap);
+      });
+    }
+
+    function renderPricingImages() {
+      const list   = document.getElementById('pricingImgList');
+      const empty  = document.getElementById('pricingImgEmpty');
+      list.innerHTML = '';
+      if (!localPricingImages.length) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+      localPricingImages.forEach((img, index) => {
+        const wrap = document.createElement('div');
+        wrap.innerHTML = `
+          <div class="img-thumb" data-action="del-pricing-img" data-index="${index}">
+            <img src="${img.src}" alt="" />
+            <span class="del-badge">삭제</span>
+          </div>
+          <input class="caption-input" data-img-caption="${index}" value="${esc(img.caption || '')}" placeholder="캡션 (선택)" />
+        `;
+        list.appendChild(wrap);
+      });
+    }
+
+    /* ─── Collect current UI state into local arrays ─────────────── */
+    function collectCurrentState() {
+      // packages
+      const pkgContainer = document.getElementById('packageList');
+      localPackages = localPackages.map((_, i) => ({
+        id:    pkgContainer.querySelector(`[data-pkg-field="id"][data-index="${i}"]`)?.value || '',
+        name:  pkgContainer.querySelector(`[data-pkg-field="name"][data-index="${i}"]`)?.value || '',
+        price: pkgContainer.querySelector(`[data-pkg-field="price"][data-index="${i}"]`)?.value || '',
+        note:  pkgContainer.querySelector(`[data-pkg-field="note"][data-index="${i}"]`)?.value || '',
+        desc:  pkgContainer.querySelector(`[data-pkg-field="desc"][data-index="${i}"]`)?.value || '',
+      }));
+      // options
+      const optContainer = document.getElementById('optionList');
+      localOptions = localOptions.map((_, i) => ({
+        id:    optContainer.querySelector(`[data-opt-field="id"][data-index="${i}"]`)?.value || '',
+        name:  optContainer.querySelector(`[data-opt-field="name"][data-index="${i}"]`)?.value || '',
+        price: optContainer.querySelector(`[data-opt-field="price"][data-index="${i}"]`)?.value || '',
+        desc:  optContainer.querySelector(`[data-opt-field="desc"][data-index="${i}"]`)?.value || '',
+      }));
+      // shooting
+      const shContainer = document.getElementById('shootingList');
+      localShooting = localShooting.map((_, i) => ({
+        id:       shContainer.querySelector(`[data-sh-field="id"][data-index="${i}"]`)?.value || '',
+        name:     shContainer.querySelector(`[data-sh-field="name"][data-index="${i}"]`)?.value || '',
+        price:    shContainer.querySelector(`[data-sh-field="price"][data-index="${i}"]`)?.value || '',
+        features: shContainer.querySelector(`[data-sh-field="features"][data-index="${i}"]`)?.value || '',
+      }));
+      // faq
+      const faqContainer = document.getElementById('faqItemList');
+      localFaq = localFaq.map((_, i) => ({
+        q: faqContainer.querySelector(`[data-faq-field="q"][data-index="${i}"]`)?.value || '',
+        a: faqContainer.querySelector(`[data-faq-field="a"][data-index="${i}"]`)?.value || '',
+      }));
+      // pricing images captions
+      const imgList = document.getElementById('pricingImgList');
+      localPricingImages = localPricingImages.map((img, i) => ({
+        src:     img.src,
+        caption: imgList.querySelector(`[data-img-caption="${i}"]`)?.value || '',
+      }));
+      // home detail images captions
+      const hdList = document.getElementById('homeDetailImgList');
+      localHomeDetailImages = localHomeDetailImages.map((img, i) => ({
+        src:     img.src,
+        caption: hdList.querySelector(`[data-home-detail-caption="${i}"]`)?.value || '',
+      }));
+    }
+
+    /* ─── Fill form from content ─────────────────────────────────── */
+    function fillForm() {
+      const content = window.getSkrContent();
+      const form = document.getElementById('adminForm');
+      [...form.elements].forEach((el) => {
+        if (!el.name) return;
+        el.value = getDeep(content, el.name) || '';
+      });
+      localPackages        = JSON.parse(JSON.stringify(content.order.packages || []));
+      localOptions         = JSON.parse(JSON.stringify(content.order.options || []));
+      localShooting        = JSON.parse(JSON.stringify(content.order.shootingPackages || []));
+      localPricingImages   = JSON.parse(JSON.stringify(content.pricing.images || []));
+      localHomeDetailImages = JSON.parse(JSON.stringify(content.home.detailImages || []));
+      localFaq              = JSON.parse(JSON.stringify((content.faq && content.faq.items) || []));
+      renderPackages();
+      renderOptions();
+      renderShooting();
+      renderPricingImages();
+      renderHomeDetailImages();
+      renderFaq();
+      renderOrders();
+    }
+
+    /* ─── Pricing images: add by file ──────────────────────────── */
+    document.getElementById('addPricingImgBtn').addEventListener('click', () => {
+      document.getElementById('pricingImgFile').click();
+    });
+    document.getElementById('pricingImgFile').addEventListener('change', (e) => {
+      const files = [...(e.target.files || [])];
+      if (!files.length) return;
+      collectCurrentState();
+      let pending = files.length;
+      files.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          localPricingImages.push({ src: String(reader.result || ''), caption: '' });
+          pending--;
+          if (pending === 0) renderPricingImages();
+        };
+        reader.readAsDataURL(file);
+      });
+      e.target.value = '';
+    });
+
+    /* ─── Delete pricing image ──────────────────────────────────── */
+    document.getElementById('pricingImgList').addEventListener('click', (e) => {
+      const thumb = e.target.closest('[data-action="del-pricing-img"]');
+      if (!thumb) return;
+      const i = Number(thumb.getAttribute('data-index'));
+      collectCurrentState();
+      localPricingImages.splice(i, 1);
+      renderPricingImages();
+    });
+
+    /* ─── Home detail images: add/delete ────────────────────────── */
+    document.getElementById('addHomeDetailImgBtn').addEventListener('click', () => {
+      document.getElementById('homeDetailImgFile').click();
+    });
+    document.getElementById('homeDetailImgFile').addEventListener('change', (e) => {
+      const files = [...(e.target.files || [])];
+      if (!files.length) return;
+      collectCurrentState();
+      let pending = files.length;
+      files.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          localHomeDetailImages.push({ src: String(reader.result || ''), caption: '' });
+          pending--;
+          if (pending === 0) renderHomeDetailImages();
+        };
+        reader.readAsDataURL(file);
+      });
+      e.target.value = '';
+    });
+    document.getElementById('homeDetailImgList').addEventListener('click', (e) => {
+      const thumb = e.target.closest('[data-action="del-home-detail-img"]');
+      if (!thumb) return;
+      const i = Number(thumb.getAttribute('data-index'));
+      collectCurrentState();
+      localHomeDetailImages.splice(i, 1);
+      renderHomeDetailImages();
+    });
+
+    /* ─── Add/Delete packages / options / shooting ──────────────── */
+    document.getElementById('addPackageBtn').addEventListener('click', () => {
+      collectCurrentState();
+      localPackages.push({ id: '', name: '', desc: '', price: '', note: '' });
+      renderPackages();
+    });
+    document.getElementById('addOptionBtn').addEventListener('click', () => {
+      collectCurrentState();
+      localOptions.push({ id: '', name: '', desc: '', price: '' });
+      renderOptions();
+    });
+    document.getElementById('addShootingBtn').addEventListener('click', () => {
+      collectCurrentState();
+      localShooting.push({ id: '', name: '', price: '', features: '' });
+      renderShooting();
+    });
+    document.getElementById('addFaqBtn').addEventListener('click', () => {
+      collectCurrentState();
+      localFaq.push({ q: '', a: '' });
+      renderFaq();
+    });
+
+    document.addEventListener('click', (e) => {
+      const action = e.target.getAttribute('data-action');
+      const idx    = Number(e.target.getAttribute('data-index'));
+      if (!action || Number.isNaN(idx)) return;
+      collectCurrentState();
+      if      (action === 'del-package')  { localPackages.splice(idx, 1);  renderPackages(); }
+      else if (action === 'del-option')   { localOptions.splice(idx, 1);   renderOptions();  }
+      else if (action === 'del-shooting') { localShooting.splice(idx, 1);  renderShooting(); }
+      else if (action === 'del-faq')      { localFaq.splice(idx, 1);       renderFaq(); }
+      else if (action === 'up-faq' && idx > 0) {
+        [localFaq[idx - 1], localFaq[idx]] = [localFaq[idx], localFaq[idx - 1]];
+        renderFaq();
+      }
+      else if (action === 'down-faq' && idx < localFaq.length - 1) {
+        [localFaq[idx + 1], localFaq[idx]] = [localFaq[idx], localFaq[idx + 1]];
+        renderFaq();
+      }
+    });
+
+    /* ─── Save ───────────────────────────────────────────────────── */
+    document.getElementById('adminForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      collectCurrentState();
+      const next = window.getSkrContent();
+      const form = document.getElementById('adminForm');
+      [...form.elements].forEach((el) => { if (!el.name) return; setDeep(next, el.name, el.value); });
+      next.order.packages         = localPackages;
+      next.order.options          = localOptions;
+      next.order.shootingPackages = localShooting;
+      next.pricing.images         = localPricingImages;
+      next.home.detailImages      = localHomeDetailImages;
+      next.faq                    = next.faq || {};
+      next.faq.items              = localFaq;
+      window.setSkrContent(next);
+      showToast('저장 완료! 사이트 페이지를 새로고침하면 반영됩니다.');
+    });
+
+    /* ─── Reset / Clear orders ──────────────────────────────────── */
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      if (!confirm('저장된 콘텐츠를 초기화할까요? 되돌릴 수 없습니다.')) return;
+      window.resetSkrContent();
+      fillForm();
+      showToast('초기화 완료.');
+    });
+    document.getElementById('clearOrdersBtn').addEventListener('click', () => {
+      if (!confirm('구매 신청 내역을 전체 삭제할까요?')) return;
+      localStorage.removeItem('skr-site-orders-v1');
+      renderOrders();
+    });
+
+    /* ─── Toast ──────────────────────────────────────────────────── */
+    function showToast(msg) {
+      const t = document.createElement('div');
+      t.textContent = msg;
+      t.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1d1d1f;color:#fff;padding:12px 24px;border-radius:999px;font-size:14px;font-weight:600;z-index:9000;box-shadow:0 8px 24px rgba(0,0,0,0.2);pointer-events:none;';
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2800);
+    }
+
+    /* ─── XSS-safe escape ────────────────────────────────────────── */
+    function esc(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    /* ─── Init ───────────────────────────────────────────────────── */
+    function initAdmin() { fillForm(); }
+    if (localStorage.getItem(AUTH_KEY) === 'ok') initAdmin();
+  </script>
+</body>
+</html>

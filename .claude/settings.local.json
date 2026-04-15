@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc -l /Users/haexhanji/Workspace/projects/skr-site/admin/*)",
+      "Bash(npm run *)"
+    ]
+  }
+}

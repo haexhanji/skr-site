@@ -1,0 +1,19 @@
+{
+  "name": "skr-site",
+  "version": "2",
+  "preferences": {
+    "reference": "apple.com/kr",
+    "style": "clean premium minimal brand site",
+    "tone": "not AI-looking, restrained, editorial, spacious",
+    "primaryCta": "가격 확인하기",
+    "coreServices": ["컴카드 제작", "프로필 촬영"]
+  },
+  "pages": [
+    {"slug": "/", "title": "SKR"},
+    {"slug": "/pricing", "title": "패키지 · 가격"},
+    {"slug": "/order", "title": "구매 신청"},
+    {"slug": "/submit", "title": "자료 제출"},
+    {"slug": "/status", "title": "진행상황"},
+    {"slug": "/admin", "title": "관리자"}
+  ]
+}
