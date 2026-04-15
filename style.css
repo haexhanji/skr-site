@@ -250,7 +250,12 @@ input, textarea, select { font-family: inherit; }
   cursor: pointer;
   transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
   text-align: left;
+  color: #1d1d1f;
+  font-family: inherit;
+  -webkit-appearance: none;
+  appearance: none;
 }
+.sel-card p, .sel-card h3 { color: inherit; }
 .sel-card:hover {
   border-color: rgba(0,113,227,0.4);
   transform: translateY(-1px);
