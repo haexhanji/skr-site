@@ -1,5 +1,6 @@
 import { sql } from '../lib/db.js';
 import { verifyAdmin } from '../lib/auth.js';
+import { readJson } from '../lib/body.js';
 
 export default async function handler(req, res) {
   try {
@@ -12,7 +13,7 @@ export default async function handler(req, res) {
 
     if (req.method === 'PUT') {
       if (!verifyAdmin(req)) return res.status(401).json({ ok: false, error: 'unauthorized' });
-      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      const body = await readJson(req);
       const data = body?.data;
       if (!data || typeof data !== 'object') {
         return res.status(400).json({ ok: false, error: 'bad payload' });

@@ -1,5 +1,6 @@
 import { sql } from '../lib/db.js';
 import { sendOrderEmail } from '../lib/mail.js';
+import { readJson } from '../lib/body.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -8,7 +9,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    const body = await readJson(req);
     if (!body || typeof body !== 'object') {
       return res.status(400).json({ ok: false, error: 'bad payload' });
     }
