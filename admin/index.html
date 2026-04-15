@@ -636,13 +636,14 @@
       return resp.json(); // { ok, src, thumb }
     }
 
-    async function uploadManyInto(files, targetArr, rerender) {
+    async function uploadImagesFor(kind, files, rerender) {
       collectCurrentState();
-      const list = [...files];
-      for (const file of list) {
+      for (const file of files) {
         try {
           const { src, thumb } = await uploadImage(file);
-          targetArr.push({ src, thumb, caption: '' });
+          const entry = { src, thumb, caption: '' };
+          if (kind === 'pricing') localPricingImages.push(entry);
+          else if (kind === 'home') localHomeDetailImages.push(entry);
           rerender();
         } catch (err) {
           showToast(err?.message || '업로드 실패');
@@ -658,7 +659,7 @@
       const files = [...(e.target.files || [])];
       e.target.value = '';
       if (!files.length) return;
-      await uploadManyInto(files, localPricingImages, renderPricingImages);
+      await uploadImagesFor('pricing', files, renderPricingImages);
     });
     document.getElementById('pricingImgList').addEventListener('click', (e) => {
       const thumb = e.target.closest('[data-action="del-pricing-img"]');
@@ -677,7 +678,7 @@
       const files = [...(e.target.files || [])];
       e.target.value = '';
       if (!files.length) return;
-      await uploadManyInto(files, localHomeDetailImages, renderHomeDetailImages);
+      await uploadImagesFor('home', files, renderHomeDetailImages);
     });
     document.getElementById('homeDetailImgList').addEventListener('click', (e) => {
       const thumb = e.target.closest('[data-action="del-home-detail-img"]');
