@@ -258,10 +258,7 @@
   </style>
 
   <script>
-    /* ─── Auth ──────────────────────────────────────────────────── */
-    const AUTH_KEY = 'skr-admin-auth-v1';
-    const ADMIN_PASSWORD = 'skr2026';
-
+    /* ─── Auth (server-backed) ──────────────────────────────────── */
     const gate = document.getElementById('authGate');
     const body = document.getElementById('adminBody');
     const pwInput = document.getElementById('pwInput');
@@ -270,29 +267,51 @@
     function showAdmin() { gate.style.display = 'none'; body.style.display = 'block'; }
     function showGate()  { body.style.display = 'none'; gate.style.display = 'flex'; }
 
-    if (localStorage.getItem(AUTH_KEY) === 'ok') {
-      showAdmin();
-    } else {
-      showGate();
+    async function checkSession() {
+      try {
+        const r = await fetch('/api/admin/me', { credentials: 'same-origin' });
+        const j = await r.json();
+        return !!(j && j.admin);
+      } catch { return false; }
     }
 
-    document.getElementById('pwSubmit').addEventListener('click', checkPassword);
-    pwInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkPassword(); });
-    function checkPassword() {
-      if (pwInput.value === ADMIN_PASSWORD) {
-        localStorage.setItem(AUTH_KEY, 'ok');
-        pwError.style.display = 'none';
+    (async () => {
+      if (await checkSession()) {
         showAdmin();
         initAdmin();
       } else {
+        showGate();
+      }
+    })();
+
+    document.getElementById('pwSubmit').addEventListener('click', checkPassword);
+    pwInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkPassword(); });
+    async function checkPassword() {
+      const pw = pwInput.value;
+      if (!pw) return;
+      try {
+        const resp = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: pw }),
+        });
+        if (resp.ok) {
+          pwError.style.display = 'none';
+          showAdmin();
+          initAdmin();
+        } else {
+          pwError.style.display = 'block';
+          pwInput.value = '';
+          pwInput.focus();
+        }
+      } catch {
+        pwError.textContent = '서버 연결 실패';
         pwError.style.display = 'block';
-        pwInput.value = '';
-        pwInput.focus();
       }
     }
 
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.removeItem(AUTH_KEY);
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try { await fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' }); } catch {}
       showGate();
       pwInput.value = '';
     });
@@ -316,33 +335,43 @@
     let localHomeDetailImages = [];
     let localFaq = [];
 
-    /* ─── Orders ─────────────────────────────────────────────────── */
-    function getOrders() { try { return JSON.parse(localStorage.getItem('skr-site-orders-v1') || '[]'); } catch { return []; } }
+    /* ─── Orders (server) ────────────────────────────────────────── */
+    async function fetchOrders() {
+      try {
+        const r = await fetch('/api/admin/orders', { credentials: 'same-origin' });
+        if (!r.ok) return [];
+        const j = await r.json();
+        return j.orders || [];
+      } catch { return []; }
+    }
 
-    function renderOrders() {
+    async function renderOrders() {
       const list = document.getElementById('orderSubmissionList');
-      const orders = getOrders();
+      list.innerHTML = '<div style="padding:16px;background:#f8f8fa;border-radius:12px;font-size:13px;color:#9ca3af;">불러오는 중...</div>';
+      const orders = await fetchOrders();
       list.innerHTML = '';
       if (!orders.length) {
         list.innerHTML = '<div style="padding:16px;background:#f8f8fa;border-radius:12px;font-size:13px;color:#9ca3af;">저장된 구매 신청 내역이 없습니다.</div>';
         return;
       }
-      orders.slice().reverse().forEach((order) => {
+      orders.forEach((row) => {
+        const order = (row.raw && typeof row.raw === 'object') ? row.raw : row;
+        const createdAt = row.created_at ? new Date(row.created_at).toLocaleString('ko-KR') : (order.createdAt || '');
         const card = document.createElement('div');
         card.style.cssText = 'background:#f8f8fa;border-radius:14px;padding:16px;border:1px solid rgba(0,0,0,0.06);margin-bottom:10px;';
         card.innerHTML = `
-          <p style="font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:0.08em;">${order.createdAt || ''}</p>
+          <p style="font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:0.08em;">${esc(createdAt)}</p>
           <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;font-size:13px;line-height:1.8;">
-            <div><strong>이름:</strong> ${order.name || ''}</div>
-            <div><strong>전화번호:</strong> ${order.phone || ''}</div>
-            <div><strong>이메일:</strong> ${order.email || ''}</div>
-            <div><strong>유형:</strong> ${order.type || ''}</div>
-            <div><strong>입금자명:</strong> ${order.depositorName || ''}</div>
-            <div><strong>패키지:</strong> ${order.packageName || ''}</div>
-            <div style="grid-column:span 2;"><strong>추가 옵션:</strong> ${order.optionNames || '없음'}</div>
-            ${order.studentDiscount ? `<div style="grid-column:span 2;"><strong>학생 할인:</strong> ${order.discountAmount || ''}</div>` : ''}
-            <div style="grid-column:span 2;padding-top:8px;border-top:1px solid rgba(0,0,0,0.07);margin-top:4px;"><strong>총 금액:</strong> <span style="color:#0071e3;font-size:15px;">${order.totalPrice || ''}</span></div>
-            ${order.note ? `<div style="grid-column:span 2;"><strong>요청사항:</strong> ${order.note}</div>` : ''}
+            <div><strong>이름:</strong> ${esc(order.name || '')}</div>
+            <div><strong>전화번호:</strong> ${esc(order.phone || '')}</div>
+            <div><strong>이메일:</strong> ${esc(order.email || '')}</div>
+            <div><strong>유형:</strong> ${esc(order.type || '')}</div>
+            <div><strong>입금자명:</strong> ${esc(order.depositorName || '')}</div>
+            <div><strong>패키지:</strong> ${esc(order.packageName || '')}</div>
+            <div style="grid-column:span 2;"><strong>추가 옵션:</strong> ${esc(order.optionNames || '없음')}</div>
+            ${order.studentDiscount ? `<div style="grid-column:span 2;"><strong>학생 할인:</strong> ${esc(order.discountAmount || '')}</div>` : ''}
+            <div style="grid-column:span 2;padding-top:8px;border-top:1px solid rgba(0,0,0,0.07);margin-top:4px;"><strong>총 금액:</strong> <span style="color:#0071e3;font-size:15px;">${esc(order.totalPrice || '')}</span></div>
+            ${order.note ? `<div style="grid-column:span 2;"><strong>요청사항:</strong> ${esc(order.note)}</div>` : ''}
           </div>
         `;
         list.appendChild(card);
@@ -535,8 +564,8 @@
     }
 
     /* ─── Fill form from content ─────────────────────────────────── */
-    function fillForm() {
-      const content = window.getSkrContent();
+    async function fillForm() {
+      const content = await window.getSkrContent();
       const form = document.getElementById('adminForm');
       [...form.elements].forEach((el) => {
         if (!el.name) return;
@@ -557,28 +586,45 @@
       renderOrders();
     }
 
-    /* ─── Pricing images: add by file ──────────────────────────── */
+    /* ─── Image upload helper (server) ──────────────────────────── */
+    async function uploadImage(file) {
+      const resp = await fetch('/api/upload', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': file.type || 'application/octet-stream' },
+        body: file,
+      });
+      if (!resp.ok) {
+        const msg = resp.status === 401 ? '로그인이 만료되었습니다.' : '업로드 실패';
+        throw new Error(msg);
+      }
+      return resp.json(); // { ok, src, thumb }
+    }
+
+    async function uploadManyInto(files, targetArr, rerender) {
+      collectCurrentState();
+      const list = [...files];
+      for (const file of list) {
+        try {
+          const { src, thumb } = await uploadImage(file);
+          targetArr.push({ src, thumb, caption: '' });
+          rerender();
+        } catch (err) {
+          showToast(err?.message || '업로드 실패');
+        }
+      }
+    }
+
+    /* ─── Pricing images: add/delete ────────────────────────────── */
     document.getElementById('addPricingImgBtn').addEventListener('click', () => {
       document.getElementById('pricingImgFile').click();
     });
-    document.getElementById('pricingImgFile').addEventListener('change', (e) => {
+    document.getElementById('pricingImgFile').addEventListener('change', async (e) => {
       const files = [...(e.target.files || [])];
-      if (!files.length) return;
-      collectCurrentState();
-      let pending = files.length;
-      files.forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          localPricingImages.push({ src: String(reader.result || ''), caption: '' });
-          pending--;
-          if (pending === 0) renderPricingImages();
-        };
-        reader.readAsDataURL(file);
-      });
       e.target.value = '';
+      if (!files.length) return;
+      await uploadManyInto(files, localPricingImages, renderPricingImages);
     });
-
-    /* ─── Delete pricing image ──────────────────────────────────── */
     document.getElementById('pricingImgList').addEventListener('click', (e) => {
       const thumb = e.target.closest('[data-action="del-pricing-img"]');
       if (!thumb) return;
@@ -592,21 +638,11 @@
     document.getElementById('addHomeDetailImgBtn').addEventListener('click', () => {
       document.getElementById('homeDetailImgFile').click();
     });
-    document.getElementById('homeDetailImgFile').addEventListener('change', (e) => {
+    document.getElementById('homeDetailImgFile').addEventListener('change', async (e) => {
       const files = [...(e.target.files || [])];
-      if (!files.length) return;
-      collectCurrentState();
-      let pending = files.length;
-      files.forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          localHomeDetailImages.push({ src: String(reader.result || ''), caption: '' });
-          pending--;
-          if (pending === 0) renderHomeDetailImages();
-        };
-        reader.readAsDataURL(file);
-      });
       e.target.value = '';
+      if (!files.length) return;
+      await uploadManyInto(files, localHomeDetailImages, renderHomeDetailImages);
     });
     document.getElementById('homeDetailImgList').addEventListener('click', (e) => {
       const thumb = e.target.closest('[data-action="del-home-detail-img"]');
@@ -659,10 +695,10 @@
     });
 
     /* ─── Save ───────────────────────────────────────────────────── */
-    document.getElementById('adminForm').addEventListener('submit', (e) => {
+    document.getElementById('adminForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       collectCurrentState();
-      const next = window.getSkrContent();
+      const next = await window.getSkrContent();
       const form = document.getElementById('adminForm');
       [...form.elements].forEach((el) => { if (!el.name) return; setDeep(next, el.name, el.value); });
       next.order.packages         = localPackages;
@@ -672,20 +708,31 @@
       next.home.detailImages      = localHomeDetailImages;
       next.faq                    = next.faq || {};
       next.faq.items              = localFaq;
-      window.setSkrContent(next);
-      showToast('저장 완료! 사이트 페이지를 새로고침하면 반영됩니다.');
+      try {
+        await window.setSkrContent(next);
+        showToast('저장 완료! 사이트 페이지를 새로고침하면 반영됩니다.');
+      } catch (err) {
+        showToast(err?.message || '저장 실패');
+      }
     });
 
     /* ─── Reset / Clear orders ──────────────────────────────────── */
-    document.getElementById('resetBtn').addEventListener('click', () => {
+    document.getElementById('resetBtn').addEventListener('click', async () => {
       if (!confirm('저장된 콘텐츠를 초기화할까요? 되돌릴 수 없습니다.')) return;
-      window.resetSkrContent();
-      fillForm();
-      showToast('초기화 완료.');
+      try {
+        await window.resetSkrContent();
+        await fillForm();
+        showToast('초기화 완료.');
+      } catch (err) {
+        showToast(err?.message || '초기화 실패');
+      }
     });
-    document.getElementById('clearOrdersBtn').addEventListener('click', () => {
+    document.getElementById('clearOrdersBtn').addEventListener('click', async () => {
       if (!confirm('구매 신청 내역을 전체 삭제할까요?')) return;
-      localStorage.removeItem('skr-site-orders-v1');
+      try {
+        const r = await fetch('/api/admin/orders', { method: 'DELETE', credentials: 'same-origin' });
+        if (!r.ok) throw new Error('삭제 실패');
+      } catch (err) { showToast(err?.message || '삭제 실패'); return; }
       renderOrders();
     });
 
@@ -705,7 +752,6 @@
 
     /* ─── Init ───────────────────────────────────────────────────── */
     function initAdmin() { fillForm(); }
-    if (localStorage.getItem(AUTH_KEY) === 'ok') initAdmin();
   </script>
 </body>
 </html>

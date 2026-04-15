@@ -145,52 +145,82 @@ window.SKR_DEFAULT_CONTENT = {
   }
 };
 
-window.SKR_CONTENT_KEY = 'skr-site-content-v1';
+/* ──────────────────────────────────────────────────────────────
+ * Content fetcher — talks to /api/content, falls back to defaults.
+ * ────────────────────────────────────────────────────────────── */
+
+function mergeWithDefaults(parsed) {
+  const def = window.SKR_DEFAULT_CONTENT;
+  parsed = parsed || {};
+  return {
+    global: { ...def.global, ...(parsed.global || {}) },
+    home: {
+      ...def.home,
+      ...(parsed.home || {}),
+      portfolioImages: (parsed.home?.portfolioImages) ?? def.home.portfolioImages,
+      detailImages: (parsed.home?.detailImages) ?? def.home.detailImages
+    },
+    pricing: {
+      ...def.pricing,
+      ...(parsed.pricing || {}),
+      images: (parsed.pricing?.images) ?? def.pricing.images
+    },
+    faq: {
+      ...def.faq,
+      ...(parsed.faq || {}),
+      items: (parsed.faq?.items) || def.faq.items
+    },
+    order: {
+      ...def.order,
+      ...(parsed.order || {}),
+      packages: (parsed.order?.packages) || def.order.packages,
+      options: (parsed.order?.options) || def.order.options,
+    shootingPackages: (parsed.order?.shootingPackages) || def.order.shootingPackages
+    },
+    submit: { ...def.submit, ...(parsed.submit || {}) },
+    status: { ...def.status, ...(parsed.status || {}) }
+  };
+}
+
+let __skrContentCache = null;
+let __skrContentPromise = null;
 
 window.getSkrContent = function getSkrContent() {
-  try {
-    const raw = localStorage.getItem(window.SKR_CONTENT_KEY);
-    if (!raw) return JSON.parse(JSON.stringify(window.SKR_DEFAULT_CONTENT));
-    const parsed = JSON.parse(raw);
-    const def = window.SKR_DEFAULT_CONTENT;
-    return {
-      global: { ...def.global, ...(parsed.global || {}) },
-      home: {
-        ...def.home,
-        ...(parsed.home || {}),
-        portfolioImages: (parsed.home?.portfolioImages) ?? def.home.portfolioImages,
-        detailImages: (parsed.home?.detailImages) ?? def.home.detailImages
-      },
-      pricing: {
-        ...def.pricing,
-        ...(parsed.pricing || {}),
-        images: (parsed.pricing?.images) ?? def.pricing.images
-      },
-      faq: {
-        ...def.faq,
-        ...(parsed.faq || {}),
-        items: (parsed.faq?.items) || def.faq.items
-      },
-      order: {
-        ...def.order,
-        ...(parsed.order || {}),
-        packages: (parsed.order?.packages) || def.order.packages,
-        options: (parsed.order?.options) || def.order.options,
-        shootingPackages: (parsed.order?.shootingPackages) || def.order.shootingPackages
-      },
-      submit: { ...def.submit, ...(parsed.submit || {}) },
-      status: { ...def.status, ...(parsed.status || {}) }
-    };
-  } catch (e) {
-    console.error('Failed to load SKR content:', e);
-    return JSON.parse(JSON.stringify(window.SKR_DEFAULT_CONTENT));
+  if (__skrContentCache) return Promise.resolve(__skrContentCache);
+  if (__skrContentPromise) return __skrContentPromise;
+  __skrContentPromise = fetch('/api/content', { credentials: 'same-origin' })
+    .then((r) => r.ok ? r.json() : { ok: false })
+    .then((j) => {
+      const merged = mergeWithDefaults(j && j.ok ? j.data : null);
+      __skrContentCache = merged;
+      return merged;
+    })
+    .catch((e) => {
+      console.error('Failed to fetch /api/content, using defaults:', e);
+      const fallback = mergeWithDefaults(null);
+      __skrContentCache = fallback;
+      return fallback;
+    })
+    .finally(() => { __skrContentPromise = null; });
+  return __skrContentPromise;
+};
+
+window.setSkrContent = async function setSkrContent(nextContent) {
+  const resp = await fetch('/api/content', {
+    method: 'PUT',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ data: nextContent }),
+  });
+  if (!resp.ok) {
+    const msg = resp.status === 401 ? '어드민 로그인이 만료되었습니다.' : '저장 실패';
+    throw new Error(msg);
   }
+  __skrContentCache = nextContent;
 };
 
-window.setSkrContent = function setSkrContent(nextContent) {
-  localStorage.setItem(window.SKR_CONTENT_KEY, JSON.stringify(nextContent));
-};
-
-window.resetSkrContent = function resetSkrContent() {
-  localStorage.removeItem(window.SKR_CONTENT_KEY);
+window.resetSkrContent = async function resetSkrContent() {
+  // Reset = overwrite DB with defaults
+  const defaults = JSON.parse(JSON.stringify(window.SKR_DEFAULT_CONTENT));
+  await window.setSkrContent(defaults);
 };

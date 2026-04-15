@@ -259,8 +259,8 @@
   </style>
 
   <script>
-  (function () {
-    const content = window.getSkrContent();
+  (async function () {
+    const content = await window.getSkrContent();
 
     document.querySelectorAll('[data-bind]').forEach((node) => {
       const path = node.getAttribute('data-bind');
@@ -465,9 +465,16 @@
       }
     };
 
-    // ── Orders ──
-    function getOrders() { try { return JSON.parse(localStorage.getItem('skr-site-orders-v1')||'[]'); } catch { return []; } }
-    function setOrders(o) { localStorage.setItem('skr-site-orders-v1', JSON.stringify(o)); }
+    // ── Orders (server) ──
+    async function submitOrder(order) {
+      const resp = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(order),
+      });
+      if (!resp.ok) throw new Error('주문 전송 실패');
+      return resp.json();
+    }
 
     // ── Submit flow ──
     document.getElementById('submitOrderBtn').addEventListener('click', () => {
@@ -495,13 +502,11 @@
       document.getElementById('privacyModal').style.display = 'flex';
     });
     document.getElementById('cancelPrivacyBtn').addEventListener('click', () => { document.getElementById('privacyModal').style.display = 'none'; });
-    document.getElementById('okPrivacyBtn').addEventListener('click', () => {
+    document.getElementById('okPrivacyBtn').addEventListener('click', async () => {
       if (!document.getElementById('privacyAgree').checked) { alert('개인정보 이용동의에 체크해줘야 계속 진행할 수 있어.'); return; }
-      document.getElementById('privacyModal').style.display = 'none';
       const v = (id) => document.getElementById(id)?.value || '';
-      const orders = getOrders();
-      orders.push({
-        createdAt: new Date().toLocaleString('ko-KR'),
+      const payload = {
+        createdAt: new Date().toISOString(),
         name: v('buyerName'), phone: v('buyerPhone'), email: v('buyerEmail'),
         type: v('buyerType'), depositorName: v('buyerDepositorName'),
         refundAccount: v('buyerRefundAccount'), refundHolder: v('buyerRefundHolder'),
@@ -509,8 +514,21 @@
         packageName: state.pkg?.name||'', optionNames: getOptionNames(),
         studentDiscount: getStudentDiscount(), discountAmount: formatPrice(getDiscountAmount()),
         totalPrice: formatPrice(getTotalPrice()), agreedPrivacy: true
-      });
-      setOrders(orders);
+      };
+      const btn = document.getElementById('okPrivacyBtn');
+      btn.disabled = true;
+      btn.textContent = '전송 중...';
+      try {
+        await submitOrder(payload);
+      } catch (e) {
+        alert('주문 전송에 실패했어요. 잠시 후 다시 시도해주세요.');
+        btn.disabled = false;
+        btn.textContent = '동의하고 계속';
+        return;
+      }
+      btn.disabled = false;
+      btn.textContent = '동의하고 계속';
+      document.getElementById('privacyModal').style.display = 'none';
       document.getElementById('paymentBank').textContent = content.global.bankName||'';
       document.getElementById('paymentAccount').textContent = content.global.accountNumber||'';
       document.getElementById('paymentHolder').textContent = content.global.accountHolder||'';

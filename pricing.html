@@ -154,8 +154,8 @@
   </footer>
 
   <script>
-    (function () {
-      const content = window.getSkrContent();
+    (async function () {
+      const content = await window.getSkrContent();
 
       document.querySelectorAll('[data-bind]').forEach((node) => {
         const path = node.getAttribute('data-bind');

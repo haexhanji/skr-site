@@ -780,8 +780,8 @@
   </footer>
 
   <script>
-    (function () {
-      const content = window.getSkrContent();
+    (async function () {
+      const content = await window.getSkrContent();
 
       const escHtml = (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
       document.querySelectorAll('[data-bind]').forEach((node) => {
