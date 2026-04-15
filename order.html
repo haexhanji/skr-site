@@ -253,8 +253,20 @@
       #wizardGrid { grid-template-columns: 1fr !important; }
     }
     @media (max-width: 560px) {
+      /* Two-column compact on phones, single only on very small */
+      #packageCards { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+      #optionCards  { grid-template-columns: 1fr !important; gap: 8px !important; }
+      .sel-card { padding: 14px 14px !important; border-radius: 14px !important; }
+      .sel-card > p:first-child { font-size: 10px !important; letter-spacing: 0.06em !important; }
+      .sel-card > h3 { font-size: 19px !important; margin-top: 6px !important; }
+      .sel-card > p:last-child { font-size: 20px !important; margin-top: 10px !important; }
+      #packageCards .sel-card > p:nth-child(3),
+      #optionCards  .sel-card > p:nth-child(2) {
+        font-size: 12px !important; line-height: 1.45 !important; margin-top: 4px !important;
+      }
+    }
+    @media (max-width: 380px) {
       #packageCards { grid-template-columns: 1fr !important; }
-      #optionCards { grid-template-columns: 1fr !important; }
     }
   </style>
 
