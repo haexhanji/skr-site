@@ -133,7 +133,10 @@
     }
 
     /* Detail images */
-    .detail-wrap { width: min(900px, calc(100% - 44px)); margin: 56px auto 120px; }
+    .detail-wrap { width: min(1600px, calc(100% - 24px)); margin: 40px auto 120px; }
+    @media (max-width: 700px) {
+      .detail-wrap { width: 100%; margin: 24px auto 120px; }
+    }
     #detailStack img { display: block; width: 100%; height: auto; }
     #detailEmpty {
       padding: 80px 24px; text-align: center;
@@ -169,7 +172,7 @@
       .nav-links { gap: 14px; font-size: 12px; }
       .trust-strip { gap: 14px; font-size: 12px; padding: 18px 0; }
       .trust-strip .sep { display: none; }
-      .detail-wrap { margin: 36px auto 140px; }
+      .detail-wrap { margin: 20px auto 140px; }
       .float-ask { right: 12px; bottom: 12px; gap: 8px; }
       .float-btn { padding: 11px 16px; font-size: 12px; }
     }
