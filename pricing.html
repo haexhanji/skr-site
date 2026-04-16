@@ -80,6 +80,11 @@
     }
     .pc-badge { font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
     .pc-sub { margin: 8px 0 0; font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .pc-variants { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .pc-variants-label { font-size: 14px; color: var(--link); font-weight: 700; letter-spacing: -0.01em; }
+    .pc-chip-col { display: flex; flex-direction: column; gap: 6px; }
+    .pc-chip { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--ink); letter-spacing: -0.005em; }
+    .pc-chip em { display: inline-flex; align-items: center; justify-content: center; background: #1d1d1f; color: #fff; font-style: normal; font-weight: 700; font-size: 11px; padding: 3px 10px; border-radius: 999px; letter-spacing: 0.04em; min-width: 46px; }
     .pc-card-price { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); white-space: nowrap; flex-shrink: 0; }
 
     .pc-addon {
@@ -209,6 +214,13 @@
               <h3><span class="pc-badge">A)</span> 학생 할인형</h3>
               <p class="pc-sub">고등학생/대학생 배우/모델분들께, 부담없이</p>
             </div>
+            <div class="pc-variants">
+              <span class="pc-variants-label">선택)</span>
+              <div class="pc-chip-col">
+                <span class="pc-chip"><em>A-A</em>기본 2장</span>
+                <span class="pc-chip"><em>A-B</em>슬림 1장</span>
+              </div>
+            </div>
             <div class="pc-card-price">₩25,000</div>
           </article>
 
@@ -216,6 +228,13 @@
             <div class="pc-card-main">
               <h3><span class="pc-badge">B)</span> 프리셋 기본형</h3>
               <p class="pc-sub">프리셋으로 더 빠르게, 기본이지만 확실하게</p>
+            </div>
+            <div class="pc-variants">
+              <span class="pc-variants-label">선택)</span>
+              <div class="pc-chip-col">
+                <span class="pc-chip"><em>B-A</em>기본 2장</span>
+                <span class="pc-chip"><em>B-B</em>슬림 1장</span>
+              </div>
             </div>
             <div class="pc-card-price">₩40,000</div>
           </article>
@@ -225,6 +244,13 @@
           <div class="pc-card-main">
             <h3><span class="pc-badge">C)</span> 맞춤형</h3>
             <p class="pc-sub">개인 1:1 맞춤형 제작, 퍼스널 컬러에 맞춘 컴카드&amp;사진보정<br/>프리셋이 아닌 고객 맞춤형으로 컴카드를 제작합니다.</p>
+          </div>
+          <div class="pc-variants">
+            <span class="pc-variants-label">선택)</span>
+            <div class="pc-chip-col">
+              <span class="pc-chip"><em>C-A</em>맞춤형 2장</span>
+              <span class="pc-chip"><em>C-B</em>맞춤형 슬림 1장</span>
+            </div>
           </div>
           <div class="pc-card-price">₩70,000</div>
         </article>
