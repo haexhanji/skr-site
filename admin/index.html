@@ -368,8 +368,11 @@
             <div><strong>유형:</strong> ${esc(order.type || '')}</div>
             <div><strong>입금자명:</strong> ${esc(order.depositorName || '')}</div>
             <div><strong>패키지:</strong> ${esc(order.packageName || '')}</div>
+            <div style="grid-column:span 2;"><strong>환불 계좌:</strong> ${esc(order.refundAccount || '-')}${order.refundHolder ? ` (${esc(order.refundHolder)})` : ''}</div>
             <div style="grid-column:span 2;"><strong>추가 옵션:</strong> ${esc(order.optionNames || '없음')}</div>
             ${order.studentDiscount ? `<div style="grid-column:span 2;"><strong>학생 할인:</strong> ${esc(order.discountAmount || '')}</div>` : ''}
+            ${order.instagram ? `<div><strong>인스타그램:</strong> ${esc(order.instagram)}</div>` : ''}
+            ${order.agency ? `<div><strong>소속사:</strong> ${esc(order.agency)}</div>` : ''}
             <div style="grid-column:span 2;padding-top:8px;border-top:1px solid rgba(0,0,0,0.07);margin-top:4px;"><strong>총 금액:</strong> <span style="color:#0071e3;font-size:15px;">${esc(order.totalPrice || '')}</span></div>
             ${order.note ? `<div style="grid-column:span 2;"><strong>요청사항:</strong> ${esc(order.note)}</div>` : ''}
           </div>
