@@ -202,14 +202,6 @@
               <div id="optionList" style="display:flex;flex-direction:column;gap:12px;"></div>
             </div>
 
-            <!-- 촬영 패키지 -->
-            <div style="background:#f8f8fa;border-radius:14px;padding:16px;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-                <h3 style="font-size:14px;font-weight:700;">직접 촬영 패키지</h3>
-                <button type="button" id="addShootingBtn" style="padding:7px 14px;border-radius:8px;background:#0071e3;color:#fff;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;">+ 추가</button>
-              </div>
-              <div id="shootingList" style="display:flex;flex-direction:column;gap:12px;"></div>
-            </div>
           </section>
 
           <!-- Save bar -->
@@ -330,7 +322,6 @@
     /* ─── Local state (avoids re-reading localStorage on every add/delete) */
     let localPackages = [];
     let localOptions  = [];
-    let localShooting = [];
     let localPricingImages   = [];
     let localHomeDetailImages = [];
     let localFaq = [];
@@ -457,31 +448,6 @@
       });
     }
 
-    function renderShooting() {
-      const container = document.getElementById('shootingList');
-      container.innerHTML = '';
-      localShooting.forEach((item, index) => {
-        const wrap = document.createElement('div');
-        wrap.style.cssText = 'background:#fff;border-radius:12px;padding:14px;border:1px solid rgba(0,0,0,0.07);display:grid;gap:10px;';
-        wrap.innerHTML = `
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <strong style="font-size:13px;font-weight:600;">촬영 패키지 ${index + 1}</strong>
-            <button type="button" data-action="del-shooting" data-index="${index}" style="padding:5px 10px;border-radius:7px;border:1.5px solid #fecaca;background:#fff5f5;color:#dc2626;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">삭제</button>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <input data-sh-field="id" data-index="${index}" value="${esc(item.id)}" placeholder="id (영문)" style="${fieldStyle()}" />
-            <input data-sh-field="name" data-index="${index}" value="${esc(item.name)}" placeholder="이름" style="${fieldStyle()}" />
-            <input data-sh-field="price" data-index="${index}" value="${esc(item.price)}" placeholder="가격" style="grid-column:span 2;${fieldStyle()}" />
-          </div>
-          <label style="display:grid;gap:6px;font-size:12px;font-weight:600;color:#9ca3af;">
-            구성 항목 (줄바꿈 구분)
-            <textarea data-sh-field="features" data-index="${index}" rows="5" placeholder="스튜디오 촬영&#10;보정본 2장&#10;원본 제공" style="${fieldStyle()} resize:vertical;">${esc(item.features)}</textarea>
-          </label>
-        `;
-        container.appendChild(wrap);
-      });
-    }
-
     function renderFaq() {
       const container = document.getElementById('faqItemList');
       container.innerHTML = '';
@@ -564,14 +530,6 @@
         price: optContainer.querySelector(`[data-opt-field="price"][data-index="${i}"]`)?.value || '',
         desc:  optContainer.querySelector(`[data-opt-field="desc"][data-index="${i}"]`)?.value || '',
       }));
-      // shooting
-      const shContainer = document.getElementById('shootingList');
-      localShooting = localShooting.map((_, i) => ({
-        id:       shContainer.querySelector(`[data-sh-field="id"][data-index="${i}"]`)?.value || '',
-        name:     shContainer.querySelector(`[data-sh-field="name"][data-index="${i}"]`)?.value || '',
-        price:    shContainer.querySelector(`[data-sh-field="price"][data-index="${i}"]`)?.value || '',
-        features: shContainer.querySelector(`[data-sh-field="features"][data-index="${i}"]`)?.value || '',
-      }));
       // faq
       const faqContainer = document.getElementById('faqItemList');
       localFaq = localFaq.map((_, i) => ({
@@ -602,13 +560,11 @@
       });
       localPackages        = JSON.parse(JSON.stringify(content.order.packages || []));
       localOptions         = JSON.parse(JSON.stringify(content.order.options || []));
-      localShooting        = JSON.parse(JSON.stringify(content.order.shootingPackages || []));
       localPricingImages   = JSON.parse(JSON.stringify(content.pricing.images || []));
       localHomeDetailImages = JSON.parse(JSON.stringify(content.home.detailImages || []));
       localFaq              = JSON.parse(JSON.stringify((content.faq && content.faq.items) || []));
       renderPackages();
       renderOptions();
-      renderShooting();
       renderPricingImages();
       renderHomeDetailImages();
       renderFaq();
@@ -729,11 +685,6 @@
       localOptions.push({ id: '', name: '', desc: '', price: '' });
       renderOptions();
     });
-    document.getElementById('addShootingBtn').addEventListener('click', () => {
-      collectCurrentState();
-      localShooting.push({ id: '', name: '', price: '', features: '' });
-      renderShooting();
-    });
     document.getElementById('addFaqBtn').addEventListener('click', () => {
       collectCurrentState();
       localFaq.push({ q: '', a: '' });
@@ -747,7 +698,6 @@
       collectCurrentState();
       if      (action === 'del-package')  { localPackages.splice(idx, 1);  renderPackages(); }
       else if (action === 'del-option')   { localOptions.splice(idx, 1);   renderOptions();  }
-      else if (action === 'del-shooting') { localShooting.splice(idx, 1);  renderShooting(); }
       else if (action === 'del-faq')      { localFaq.splice(idx, 1);       renderFaq(); }
       else if (action === 'up-faq' && idx > 0) {
         [localFaq[idx - 1], localFaq[idx]] = [localFaq[idx], localFaq[idx - 1]];
@@ -768,7 +718,6 @@
       [...form.elements].forEach((el) => { if (!el.name) return; setDeep(next, el.name, el.value); });
       next.order.packages         = localPackages;
       next.order.options          = localOptions;
-      next.order.shootingPackages = localShooting;
       next.pricing.images         = localPricingImages;
       next.home.detailImages      = localHomeDetailImages;
       next.faq                    = next.faq || {};

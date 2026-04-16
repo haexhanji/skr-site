@@ -370,21 +370,23 @@
     }
 
     // ── Package cards ──
+    const PKG_BADGE = { student: 'A', basic: 'B', signature: 'C' };
     function renderPackageCards() {
       const container = document.getElementById('packageCards');
       container.innerHTML = '';
       (content.order.packages || []).forEach((pkg) => {
         const active = state.pkg?.id === pkg.id;
+        const badge = PKG_BADGE[pkg.id] || '';
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'sel-card' + (active ? ' selected' : '');
         btn.style.cssText = 'width:100%;';
         btn.innerHTML = `
-          <p style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${active?'#0071e3':'#9ca3af'};">${pkg.id==='student'?'학생 전용':pkg.id==='basic'?'기본형':'개성 중심'}</p>
-          <h3 style="margin-top:10px;font-size:26px;font-weight:700;letter-spacing:-0.04em;">${pkg.name}</h3>
+          ${badge ? `<span style="display:inline-flex;align-items:center;justify-content:center;background:${active?'#0071e3':'#1d1d1f'};color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;letter-spacing:0.05em;margin-bottom:10px;">${badge})</span>` : ''}
+          <h3 style="margin-top:4px;font-size:22px;font-weight:700;letter-spacing:-0.03em;">${pkg.name}</h3>
           <p style="margin-top:8px;font-size:13px;line-height:1.6;color:#6e6e73;">${pkg.desc}</p>
           ${pkg.note ? `<p style="margin-top:6px;font-size:11px;font-weight:600;color:#0071e3;">${pkg.note}</p>` : ''}
-          <p style="margin-top:16px;font-size:28px;font-weight:700;letter-spacing:-0.04em;">${pkg.price}</p>
+          <p style="margin-top:16px;font-size:26px;font-weight:700;letter-spacing:-0.04em;">${pkg.price}</p>
         `;
         btn.addEventListener('click', () => {
           state.pkg = pkg;
@@ -395,6 +397,10 @@
     }
 
     // ── Option cards ──
+    const OPT_BADGE = {
+      website: 'D-A', video: 'D-B',
+      'shoot-light': 'D-C 라이트', 'shoot-basic': 'D-C 베이직', 'shoot-sig': 'D-C 시그니처'
+    };
     function renderOptionCards() {
       const container = document.getElementById('optionCards');
       container.innerHTML = '';
@@ -404,11 +410,14 @@
         const displayPrice = disc
           ? `<span style="text-decoration:line-through;color:#c0c0c8;font-size:16px;">${opt.price}</span>&nbsp;<span style="color:#0071e3;">${formatPrice(getOptionPrice(opt))}</span>`
           : `<span>${opt.price}</span>`;
+        const badge = OPT_BADGE[opt.id] || '';
+        const isShoot = /^shoot-/.test(opt.id);
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'sel-card' + (active ? ' selected' : '');
         btn.style.cssText = 'width:100%;';
         btn.innerHTML = `
+          ${badge ? `<span style="display:inline-flex;align-items:center;justify-content:center;background:${isShoot?'#1a9655':'#1d1d1f'};color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;letter-spacing:0.02em;margin-bottom:8px;">${badge}</span>` : ''}
           <h3 style="font-size:17px;font-weight:600;letter-spacing:-0.02em;">${opt.name}</h3>
           <p style="margin-top:6px;font-size:13px;line-height:1.6;color:#6e6e73;">${opt.desc}</p>
           <p style="margin-top:14px;font-size:22px;font-weight:700;letter-spacing:-0.03em;">${displayPrice}</p>
