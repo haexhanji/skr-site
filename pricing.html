@@ -109,27 +109,42 @@
     .pc-shoot-col li { font-size: 13px; color: var(--ink); letter-spacing: -0.01em; padding-left: 14px; position: relative; line-height: 1.45; }
     .pc-shoot-col li::before { content: ''; position: absolute; left: 4px; top: 8px; width: 4px; height: 4px; border-radius: 50%; background: #1a9655; }
 
-    @media (max-width: 860px) {
-      .pc-row { grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
-      .pc-card { padding: 22px; flex-direction: column; align-items: flex-start; gap: 16px; }
+    @media (max-width: 900px) {
+      .pc-row { grid-template-columns: 1fr; gap: 14px; margin-bottom: 14px; }
+      .pc-card {
+        padding: 22px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-areas: "main price" "variants variants";
+        align-items: start; gap: 14px 18px;
+      }
+      .pc-card-main { grid-area: main; }
+      .pc-card-price { grid-area: price; font-size: 24px; align-self: start; }
+      .pc-variants { grid-area: variants; gap: 10px; padding-top: 14px; border-top: 1px solid rgba(0,0,0,0.06); width: 100%; }
       .pc-card h3 { font-size: 20px; }
-      .pc-card-price { font-size: 24px; }
-      .pc-addon { padding: 24px 22px; border-radius: 20px; }
-      .pc-addon-title { font-size: 19px; margin-bottom: 16px; }
-      .pc-addon-item { grid-template-columns: 1fr; gap: 8px; padding: 16px 0; }
-      .pc-addon-price { font-size: 19px; }
+      .pc-sub { font-size: 13px; }
+      .pc-addon { padding: 26px 22px; border-radius: 22px; }
+      .pc-addon-title { font-size: 20px; margin-bottom: 18px; }
+      .pc-addon-item { grid-template-columns: 1fr; gap: 10px; padding: 18px 0; }
+      .pc-addon-price { font-size: 20px; }
       .pc-addon-shoot { grid-template-columns: 1fr; gap: 12px; }
+      .pc-shoot-col { padding: 22px 20px; }
+      .pc-shoot-head strong { font-size: 17px; }
+      .pc-shoot-col li { font-size: 14px; }
     }
     @media (max-width: 480px) {
       .pc-card { padding: 18px; border-radius: 18px; }
-      .pc-card h3 { font-size: 18px; }
+      .pc-card h3 { font-size: 19px; }
       .pc-sub { font-size: 12.5px; }
+      .pc-variants-label { font-size: 13px; }
+      .pc-chip { font-size: 12px; }
+      .pc-chip em { font-size: 10px; min-width: 40px; padding: 2px 8px; }
       .pc-card-price { font-size: 22px; }
-      .pc-addon { padding: 20px 18px; }
-      .pc-addon-name { font-size: 14px; }
-      .pc-addon-desc { font-size: 12px; }
-      .pc-addon-price { font-size: 17px; }
-      .pc-shoot-col li { font-size: 12.5px; }
+      .pc-addon { padding: 22px 18px; }
+      .pc-addon-name { font-size: 14.5px; }
+      .pc-addon-desc { font-size: 12.5px; line-height: 1.6; }
+      .pc-addon-price { font-size: 18px; }
+      .pc-shoot-col li { font-size: 13px; }
     }
 
     /* Detail images */
