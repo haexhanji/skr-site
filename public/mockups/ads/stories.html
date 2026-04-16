@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SKR — Instagram Story Ads</title>
+  <style>
+    :root {
+      --ink: #1d1d1f;
+      --accent: #ff6a3d;
+      --link: #0071e3;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 40px 24px;
+      background: #f0f0f3;
+      font-family: 'Pretendard', 'SF Pro KR', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      color: var(--ink);
+      word-break: keep-all;
+    }
+    h1.page-title {
+      text-align: center; margin: 0 auto 36px;
+      font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
+    }
+    .hint {
+      text-align: center; font-size: 13px; color: #6e6e73;
+      margin-bottom: 48px; line-height: 1.7;
+    }
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 32px; max-width: 1400px; margin: 0 auto;
+    }
+    .story-wrap {
+      display: flex; flex-direction: column; gap: 12px; align-items: center;
+    }
+    .story-label {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6e6e73;
+      text-transform: uppercase;
+    }
+    .story-scale {
+      width: 100%; max-width: 360px;
+      aspect-ratio: 9 / 16;
+      position: relative; overflow: hidden;
+      border-radius: 28px;
+      box-shadow: 0 20px 48px rgba(0,0,0,0.14);
+    }
+    .story {
+      position: absolute; top: 0; left: 0;
+      width: 1080px; height: 1920px;
+      transform-origin: top left;
+      display: flex; flex-direction: column;
+      padding: 120px 100px;
+      overflow: hidden;
+    }
+    /* Scale 360/1080 = 0.333 */
+    @media (min-width: 0) {
+      .story-scale[data-w] { /* placeholder */ }
+    }
+
+    /* ——— Story 1: Attention Hook ——— */
+    .s1 {
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 15%, rgba(255,106,61,0.28) 0%, transparent 60%),
+        linear-gradient(180deg, #0b0b0c 0%, #1a1a1d 100%);
+      color: #fff;
+    }
+    .s1 .hook {
+      font-size: 72px; font-weight: 700; letter-spacing: -0.02em;
+      color: var(--accent);
+      display: inline-flex; align-items: center; gap: 16px;
+    }
+    .s1 .hook::before {
+      content: ''; width: 22px; height: 22px; border-radius: 50%;
+      background: var(--accent); box-shadow: 0 0 0 8px rgba(255,106,61,0.2);
+    }
+    .s1 .title {
+      margin-top: 64px;
+      font-size: 168px; font-weight: 800; line-height: 0.96; letter-spacing: -0.05em;
+    }
+    .s1 .title em {
+      font-style: normal;
+      background: linear-gradient(180deg, #fff 0%, #bfbfc5 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .s1 .title .hl { color: var(--accent); }
+    .s1 .body {
+      margin-top: 72px;
+      font-size: 40px; line-height: 1.55; color: rgba(255,255,255,0.75);
+      font-weight: 500; letter-spacing: -0.015em;
+      max-width: 800px;
+    }
+    .s1 .footer {
+      margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    }
+    .s1 .brand {
+      display: inline-flex; align-items: center; gap: 16px;
+      font-size: 32px; font-weight: 700; letter-spacing: 0.04em;
+    }
+    .s1 .brand::before {
+      content: ''; width: 24px; height: 24px; border-radius: 50%; background: var(--accent);
+    }
+    .s1 .cta {
+      display: inline-flex; align-items: center; gap: 16px;
+      background: #fff; color: #000;
+      font-size: 36px; font-weight: 700; letter-spacing: -0.01em;
+      padding: 26px 46px; border-radius: 999px;
+    }
+
+    /* ——— Story 2: Price ——— */
+    .s2 {
+      background: linear-gradient(180deg, #f5f5f7 0%, #eceff5 100%);
+      color: var(--ink);
+    }
+    .s2 .eyebrow {
+      font-size: 28px; font-weight: 700; color: var(--link);
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .s2 .hook {
+      margin-top: 40px;
+      font-size: 88px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.05;
+      color: var(--ink);
+    }
+    .s2 .price-block { margin-top: 72px; }
+    .s2 .price-label { font-size: 32px; font-weight: 600; color: #6e6e73; }
+    .s2 .price {
+      margin-top: 20px;
+      font-size: 260px; font-weight: 800; letter-spacing: -0.05em; line-height: 0.95;
+      color: var(--ink);
+    }
+    .s2 .price .unit { font-size: 90px; font-weight: 700; color: #6e6e73; margin-left: 8px; }
+    .s2 .price sup {
+      font-size: 44px; font-weight: 600; color: var(--accent);
+      letter-spacing: 0;
+      margin-left: 14px; vertical-align: super; top: -1.2em;
+    }
+    .s2 .perks {
+      margin-top: 40px;
+      display: flex; gap: 12px; flex-wrap: wrap;
+    }
+    .s2 .perk {
+      padding: 18px 28px;
+      border-radius: 999px;
+      background: #fff;
+      font-size: 30px; font-weight: 600;
+      color: var(--ink);
+      border: 1.5px solid rgba(0,0,0,0.08);
+    }
+    .s2 .perk strong { color: var(--accent); font-weight: 700; }
+    .s2 .footer {
+      margin-top: auto; display: flex; align-items: center; justify-content: space-between;
+    }
+    .s2 .brand {
+      font-size: 32px; font-weight: 700; letter-spacing: 0.04em;
+      display: inline-flex; align-items: center; gap: 16px;
+    }
+    .s2 .brand::before {
+      content: ''; width: 22px; height: 22px; border-radius: 50%; background: var(--accent);
+    }
+    .s2 .cta {
+      display: inline-flex; align-items: center; gap: 14px;
+      background: var(--link); color: #fff;
+      font-size: 36px; font-weight: 700;
+      padding: 26px 46px; border-radius: 999px;
+    }
+
+    /* ——— Story 3: 0.1초 ——— */
+    .s3 {
+      background: #fff; color: var(--ink);
+      position: relative;
+    }
+    .s3::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 60%;
+      background: radial-gradient(ellipse 60% 60% at 70% 20%, rgba(255,106,61,0.22) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .s3 .inner { position: relative; z-index: 1; display: contents; }
+    .s3 .eyebrow {
+      font-size: 28px; font-weight: 700; color: var(--accent);
+      letter-spacing: 0.18em; text-transform: uppercase;
+    }
+    .s3 .display {
+      margin-top: 56px;
+      font-size: 420px; font-weight: 800; line-height: 0.88; letter-spacing: -0.08em;
+      color: var(--ink);
+    }
+    .s3 .display .dot {
+      color: var(--accent);
+    }
+    .s3 .sub-big {
+      margin-top: 48px;
+      font-size: 68px; font-weight: 700; line-height: 1.1; letter-spacing: -0.035em;
+    }
+    .s3 .desc {
+      margin-top: 40px;
+      font-size: 36px; line-height: 1.55; color: #4b5060; font-weight: 500;
+      max-width: 780px;
+    }
+    .s3 .footer {
+      margin-top: auto; display: flex; align-items: center; justify-content: space-between;
+    }
+    .s3 .brand {
+      font-size: 32px; font-weight: 700; letter-spacing: 0.04em;
+      display: inline-flex; align-items: center; gap: 16px;
+    }
+    .s3 .brand::before {
+      content: ''; width: 22px; height: 22px; border-radius: 50%; background: var(--accent);
+    }
+    .s3 .cta {
+      display: inline-flex; align-items: center; gap: 14px;
+      background: var(--ink); color: #fff;
+      font-size: 36px; font-weight: 700;
+      padding: 26px 46px; border-radius: 999px;
+    }
+
+    /* ——— Story 4: Urgency ——— */
+    .s4 {
+      background:
+        linear-gradient(180deg, #001437 0%, #001437 50%, #04224d 100%);
+      color: #fff;
+      position: relative; overflow: hidden;
+    }
+    .s4::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 50% 30% at 20% 80%, rgba(120,140,255,0.28) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 30% at 85% 30%, rgba(255,106,61,0.22) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .s4 .inner { position: relative; z-index: 1; display: contents; }
+    .s4 .alert {
+      display: inline-flex; align-items: center; gap: 16px;
+      background: rgba(255,255,255,0.1); border: 1.5px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(10px);
+      border-radius: 999px;
+      padding: 18px 34px;
+      font-size: 28px; font-weight: 600; letter-spacing: -0.005em;
+      color: #fff;
+    }
+    .s4 .alert::before {
+      content: ''; width: 14px; height: 14px; border-radius: 50%;
+      background: #34c759;
+      box-shadow: 0 0 0 6px rgba(52,199,89,0.3);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .45; transform: scale(0.7); }
+    }
+    .s4 .hook {
+      margin-top: 72px;
+      font-size: 132px; font-weight: 800; line-height: 1; letter-spacing: -0.04em;
+    }
+    .s4 .hook .orange { color: var(--accent); }
+    .s4 .sub {
+      margin-top: 52px;
+      font-size: 48px; font-weight: 600; line-height: 1.35; letter-spacing: -0.02em;
+      color: rgba(255,255,255,0.88);
+    }
+    .s4 .steps {
+      margin-top: 64px;
+      display: flex; flex-direction: column; gap: 22px;
+    }
+    .s4 .step {
+      display: flex; align-items: center; gap: 28px;
+      font-size: 38px; font-weight: 600; color: #fff; letter-spacing: -0.015em;
+    }
+    .s4 .step .n {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.22);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 28px; font-weight: 700; color: #fff;
+    }
+    .s4 .footer {
+      margin-top: auto; display: flex; align-items: center; justify-content: space-between;
+    }
+    .s4 .brand {
+      font-size: 32px; font-weight: 700; letter-spacing: 0.04em;
+      display: inline-flex; align-items: center; gap: 16px;
+    }
+    .s4 .brand::before {
+      content: ''; width: 22px; height: 22px; border-radius: 50%; background: var(--accent);
+    }
+    .s4 .cta {
+      display: inline-flex; align-items: center; gap: 14px;
+      background: #fee500; color: #111;
+      font-size: 36px; font-weight: 700;
+      padding: 26px 46px; border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="page-title">SKR — Instagram Story Ads (9:16)</h1>
+  <p class="hint">
+    각 프레임은 실제 1080 × 1920px로 만들어져 있고, 화면에서는 축소되어 보여요.<br/>
+    크롬 개발자도구 → Elements에서 `.story` 요소 우클릭 → <strong>Capture node screenshot</strong>으로 원본 크기 저장 가능.
+  </p>
+
+  <div class="grid">
+
+    <!-- STORY 1 -->
+    <div class="story-wrap">
+      <span class="story-label">STORY 01 · ATTENTION</span>
+      <div class="story-scale">
+        <div class="story s1" style="transform: scale(0.333);">
+          <span class="hook">배우님, 잠깐만요.</span>
+          <h2 class="title">
+            <em>오디션 전에,</em><br/>
+            <span class="hl">컴카드부터.</span>
+          </h2>
+          <p class="body">
+            캐스팅 디렉터가 첫 장을 넘기는 시간, <br/>딱 0.1초. 그 한 장면을 SKR가 만듭니다.
+          </p>
+          <div class="footer">
+            <span class="brand">SKR STUDIO</span>
+            <span class="cta">지금 시작하기 →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORY 2 -->
+    <div class="story-wrap">
+      <span class="story-label">STORY 02 · PRICE</span>
+      <div class="story-scale">
+        <div class="story s2" style="transform: scale(0.333);">
+          <p class="eyebrow">Seasonal Pricing · 2026</p>
+          <h2 class="hook">학생도 부담 없이<br/>시작하는 컴카드.</h2>
+          <div class="price-block">
+            <p class="price-label">시작 가격</p>
+            <p class="price">25,000<span class="unit">원</span><sup>부터</sup></p>
+          </div>
+          <div class="perks">
+            <span class="perk">학생 <strong>10%</strong> 할인</span>
+            <span class="perk">평균 <strong>3일</strong> 전달</span>
+            <span class="perk">수정 포함</span>
+          </div>
+          <div class="footer">
+            <span class="brand">SKR STUDIO</span>
+            <span class="cta">바로 주문 →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORY 3 -->
+    <div class="story-wrap">
+      <span class="story-label">STORY 03 · 0.1초</span>
+      <div class="story-scale">
+        <div class="story s3" style="transform: scale(0.333);">
+          <div class="inner">
+            <p class="eyebrow">첫인상은</p>
+            <p class="display">0<span class="dot">.</span>1<span class="dot">초</span></p>
+            <h3 class="sub-big">캐스팅 디렉터가<br/>컴카드를 넘기는 시간.</h3>
+            <p class="desc">
+              그 짧은 한 순간에 당신이 남기 위해,<br/>
+              SKR가 한 장면을 정리합니다.
+            </p>
+            <div class="footer">
+              <span class="brand">SKR STUDIO</span>
+              <span class="cta">가격 보기 →</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORY 4 -->
+    <div class="story-wrap">
+      <span class="story-label">STORY 04 · URGENCY</span>
+      <div class="story-scale">
+        <div class="story s4" style="transform: scale(0.333);">
+          <div class="inner">
+            <span class="alert">실시간 12명 상담중</span>
+            <h2 class="hook">
+              오디션 전날,<br/>
+              <span class="orange">컴카드 급하세요?</span>
+            </h2>
+            <p class="sub">
+              오늘 카톡으로 상담만 남기면<br/>
+              내일 바로 작업 들어갑니다.
+            </p>
+            <div class="steps">
+              <div class="step"><span class="n">1</span>카카오톡 채널 추가</div>
+              <div class="step"><span class="n">2</span>패키지 · 자료 전달</div>
+              <div class="step"><span class="n">3</span>평균 3일 내 완성</div>
+            </div>
+            <div class="footer">
+              <span class="brand">SKR STUDIO</span>
+              <span class="cta">💬 카톡 상담</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
