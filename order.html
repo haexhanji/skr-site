@@ -75,14 +75,18 @@
                 <div style="background:#f8f8fa;border:1.5px solid rgba(0,0,0,0.07);border-radius:18px;padding:24px;">
                   <p style="font-size:15px;font-weight:600;">학생이신가요?</p>
                   <p style="margin-top:6px;font-size:13px;color:#6e6e73;line-height:1.7;">고등학생 또는 대학교 재학생이면 추가 옵션에 10% 할인이 적용됩니다. 학생증 또는 재학증명서 확인이 필요합니다.</p>
-                  <label style="display:flex;align-items:center;gap:10px;margin-top:16px;cursor:pointer;">
+                  <label id="studentCheckLabel" style="display:flex;align-items:center;gap:10px;margin-top:16px;cursor:pointer;">
                     <input id="studentCheck" type="checkbox" style="width:18px;height:18px;accent-color:#0071e3;" onchange="wizard.updateStudent(this.checked)" />
                     <span style="font-size:14px;font-weight:600;">학생 할인 적용 (추가 옵션 10% 할인)</span>
                   </label>
+                  <p id="studentPkgNotice" style="display:none;margin-top:12px;padding:10px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;font-size:12px;color:#c2410c;line-height:1.6;">
+                    학생 패키지는 이미 학생 가격이 적용되어 추가 할인이 중복 적용되지 않습니다.
+                  </p>
                 </div>
                 <div style="background:#f8f8fa;border:1.5px solid rgba(0,0,0,0.07);border-radius:18px;padding:18px 20px;font-size:13px;color:#9ca3af;line-height:1.9;">
                   · 허위 할인 신청 시 주문 취소 또는 환불 처리될 수 있습니다.<br />
                   · 학생 패키지는 학생 전용이며, 인증 파일 미제출 시 기본 패키지로 전환됩니다.<br />
+                  · 학생 패키지 구매 시 추가 학생 할인은 중복 적용되지 않습니다.<br />
                   · 입금 후 할인 대상 확인이 진행됩니다.
                 </div>
               </div>
@@ -299,8 +303,12 @@
     function getPaidOptions() {
       return state.options.filter((o) => o.id !== 'none');
     }
+    function isStudentPackage() {
+      return state.pkg?.id === 'student';
+    }
     function getStudentDiscount() {
-      return state.isStudent;
+      // 학생 패키지는 이미 학생 가격이라 중복 할인 안 함
+      return state.isStudent && !isStudentPackage();
     }
     function getOptionPrice(opt) {
       const base = parsePrice(opt.price);
@@ -416,7 +424,22 @@
     // ── Student step ──
     function renderStudentStep() {
       const check = document.getElementById('studentCheck');
-      check.checked = state.isStudent;
+      const label = document.getElementById('studentCheckLabel');
+      const notice = document.getElementById('studentPkgNotice');
+      const pkgIsStudent = isStudentPackage();
+      if (pkgIsStudent) {
+        // Force off and disable
+        state.isStudent = false;
+        check.checked = false;
+        check.disabled = true;
+        if (label) label.style.opacity = '0.45';
+        if (notice) notice.style.display = 'block';
+      } else {
+        check.disabled = false;
+        check.checked = state.isStudent;
+        if (label) label.style.opacity = '1';
+        if (notice) notice.style.display = 'none';
+      }
     }
 
     // ── Summary sidebar ──
