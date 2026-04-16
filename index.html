@@ -666,32 +666,6 @@
 </head>
 <body>
 
-  <!-- Slate intro -->
-  <div class="slate-intro" id="slateIntro">
-    <div class="slate-stage" id="slateStage">
-      <div class="slate-body">
-        <div class="slate-grid">
-          <div class="slate-title">SKR Studio</div>
-          <div class="slate-field"><span class="k">Scene</span><span class="v">01</span></div>
-          <div class="slate-field"><span class="k">Take</span><span class="v">001</span></div>
-          <div class="slate-field"><span class="k">Roll</span><span class="v">A</span></div>
-          <div class="slate-field"><span class="k">Director</span><span class="v">SKR</span></div>
-          <div class="slate-field"><span class="k">Date</span><span class="v">—</span></div>
-          <div class="slate-field"><span class="k">Format</span><span class="v">COMP.CARD</span></div>
-          <div class="slate-foot"><span>Production · SKR Studio</span><span>Int / Day</span></div>
-        </div>
-      </div>
-      <div class="slate-clapper">
-        <div class="slate-clapper-inner">
-          <div class="slate-stripes"></div>
-          <div class="slate-hinge"></div>
-          <div class="slate-hinge right"></div>
-        </div>
-      </div>
-    </div>
-    <div class="slate-flash"></div>
-    <button class="slate-skip" id="slateSkip">Skip</button>
-  </div>
 
   <!-- Nav -->
   <header class="nav">
@@ -817,31 +791,6 @@
         });
       }, { threshold: 0.12 });
       document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
-
-      /* Slate intro */
-      const intro = document.getElementById('slateIntro');
-      const stage = document.getElementById('slateStage');
-      const skip = document.getElementById('slateSkip');
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const SEEN_KEY = 'skr-slate-seen';
-
-      function finishSlate(immediate) {
-        intro.classList.add('done');
-        document.body.classList.remove('slate-active');
-        setTimeout(() => intro.remove(), immediate ? 0 : 650);
-        try { sessionStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
-      }
-      let seen = false;
-      try { seen = !!sessionStorage.getItem(SEEN_KEY); } catch (e) {}
-
-      if (reduce || seen) {
-        finishSlate(true);
-      } else {
-        document.body.classList.add('slate-active');
-        requestAnimationFrame(() => stage.classList.add('play'));
-        setTimeout(() => finishSlate(false), 1850);
-      }
-      skip.addEventListener('click', () => finishSlate(true));
     })();
   </script>
 </body>
