@@ -61,6 +61,72 @@
     .trust-strip .sep { color: rgba(0,0,0,0.15); }
     .trust-strip .star { color: #ff9500; letter-spacing: 1px; margin-right: 4px; }
 
+    /* ——— Pricing compare (A/B/C + D addon) ——— */
+    .pricing-compare { padding: 48px 0 24px; }
+    .pc-note { text-align: center; font-size: 14px; font-weight: 600; color: var(--ink); margin: 0 0 32px; letter-spacing: -0.01em; }
+    .pc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .pc-card {
+      background: #f5f5f7;
+      border-radius: 22px;
+      padding: 26px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 20px;
+    }
+    .pc-card.pc-card-wide { align-items: center; }
+    .pc-card-main { flex: 1; min-width: 0; }
+    .pc-card h3 {
+      margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.025em; color: var(--ink);
+      display: flex; align-items: baseline; gap: 8px;
+    }
+    .pc-badge { font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+    .pc-sub { margin: 8px 0 0; font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .pc-card-price { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); white-space: nowrap; flex-shrink: 0; }
+
+    .pc-addon {
+      margin-top: 40px;
+      background: #eaf1fe;
+      border-radius: 24px;
+      padding: 36px 40px;
+    }
+    .pc-addon-title { margin: 0 0 24px; font-size: 22px; font-weight: 700; letter-spacing: -0.025em; display: inline-flex; align-items: baseline; gap: 8px; }
+    .pc-addon-item { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start; padding: 20px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+    .pc-addon-name { margin: 0 0 8px; font-size: 15px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); display: inline-flex; align-items: center; gap: 10px; }
+    .pc-chip-sm { display: inline-flex; align-items: center; justify-content: center; background: #1d1d1f; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; letter-spacing: 0.02em; }
+    .pc-chip-sm.pc-chip-green { background: #1a9655; }
+    .pc-addon-desc { margin: 0; font-size: 13px; line-height: 1.7; color: #4b5060; }
+    .pc-addon-price { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); white-space: nowrap; }
+
+    .pc-addon-shoot { margin-top: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .pc-shoot-col { background: #fff; border-radius: 18px; padding: 24px 22px; border: 1px solid rgba(0,0,0,0.05); }
+    .pc-shoot-head { margin: 0 0 16px; padding-bottom: 14px; border-bottom: 1px solid rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; flex-wrap: wrap; }
+    .pc-shoot-head strong { font-weight: 700; color: #1a9655; font-size: 16px; letter-spacing: -0.01em; }
+    .pc-shoot-col ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .pc-shoot-col li { font-size: 13px; color: var(--ink); letter-spacing: -0.01em; padding-left: 14px; position: relative; line-height: 1.45; }
+    .pc-shoot-col li::before { content: ''; position: absolute; left: 4px; top: 8px; width: 4px; height: 4px; border-radius: 50%; background: #1a9655; }
+
+    @media (max-width: 860px) {
+      .pc-row { grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
+      .pc-card { padding: 22px; flex-direction: column; align-items: flex-start; gap: 16px; }
+      .pc-card h3 { font-size: 20px; }
+      .pc-card-price { font-size: 24px; }
+      .pc-addon { padding: 24px 22px; border-radius: 20px; }
+      .pc-addon-title { font-size: 19px; margin-bottom: 16px; }
+      .pc-addon-item { grid-template-columns: 1fr; gap: 8px; padding: 16px 0; }
+      .pc-addon-price { font-size: 19px; }
+      .pc-addon-shoot { grid-template-columns: 1fr; gap: 12px; }
+    }
+    @media (max-width: 480px) {
+      .pc-card { padding: 18px; border-radius: 18px; }
+      .pc-card h3 { font-size: 18px; }
+      .pc-sub { font-size: 12.5px; }
+      .pc-card-price { font-size: 22px; }
+      .pc-addon { padding: 20px 18px; }
+      .pc-addon-name { font-size: 14px; }
+      .pc-addon-desc { font-size: 12px; }
+      .pc-addon-price { font-size: 17px; }
+      .pc-shoot-col li { font-size: 12.5px; }
+    }
+
     /* Detail images */
     .detail-wrap { width: min(900px, calc(100% - 44px)); margin: 56px auto 120px; }
     #detailStack img { display: block; width: 100%; height: auto; }
@@ -130,6 +196,106 @@
           <span class="sep">·</span>
           <span data-bind="pricing.trustNotice">무통장 즉시 확인</span>
         </div>
+      </div>
+    </section>
+
+    <section class="pricing-compare">
+      <div class="wrap" style="width:min(1180px, calc(100% - 32px));">
+        <p class="pc-note">*매수는 상담을 통해 결정됩니다!!</p>
+
+        <div class="pc-row">
+          <article class="pc-card">
+            <div class="pc-card-main">
+              <h3><span class="pc-badge">A)</span> 학생 할인형</h3>
+              <p class="pc-sub">고등학생/대학생 배우/모델분들께, 부담없이</p>
+            </div>
+            <div class="pc-card-price">₩25,000</div>
+          </article>
+
+          <article class="pc-card">
+            <div class="pc-card-main">
+              <h3><span class="pc-badge">B)</span> 프리셋 기본형</h3>
+              <p class="pc-sub">프리셋으로 더 빠르게, 기본이지만 확실하게</p>
+            </div>
+            <div class="pc-card-price">₩40,000</div>
+          </article>
+        </div>
+
+        <article class="pc-card pc-card-wide">
+          <div class="pc-card-main">
+            <h3><span class="pc-badge">C)</span> 맞춤형</h3>
+            <p class="pc-sub">개인 1:1 맞춤형 제작, 퍼스널 컬러에 맞춘 컴카드&amp;사진보정<br/>프리셋이 아닌 고객 맞춤형으로 컴카드를 제작합니다.</p>
+          </div>
+          <div class="pc-card-price">₩70,000</div>
+        </article>
+
+        <section class="pc-addon">
+          <h3 class="pc-addon-title"><span class="pc-badge pc-badge-d">D)</span> 추가 패키지</h3>
+
+          <div class="pc-addon-item">
+            <div>
+              <p class="pc-addon-name"><span class="pc-chip-sm">D-A</span>개인 웹사이트 제작</p>
+              <p class="pc-addon-desc">개인 포트폴리오용 감각적인 웹사이트를 제작해드립니다. (도메인 1년마다 갱신 필요.)</p>
+            </div>
+            <div class="pc-addon-price">₩100,000</div>
+          </div>
+
+          <div class="pc-addon-item">
+            <div>
+              <p class="pc-addon-name"><span class="pc-chip-sm">D-B</span>포트폴리오 영상제작</p>
+              <p class="pc-addon-desc">포트폴리오 영상을 제작해드립니다. (기존 연기영상 편집 + 포트폴리오용 영상/영화제작 · 1분 이내/협의)<br/>촬영을 직접 진행하며, 1분 이내의 영화같은 연기영상을 제작해드립니다. 상담을 통해 내용이나 가격이 수정/추가될 수 있습니다.</p>
+            </div>
+            <div class="pc-addon-price">₩200,000</div>
+          </div>
+
+          <div class="pc-addon-item pc-addon-item-tall">
+            <div>
+              <p class="pc-addon-name"><span class="pc-chip-sm">D-C</span>프로필 사진 촬영 패키지</p>
+              <p class="pc-addon-desc">프로필 사진(스튜디오) + 프로필 영상(30초 이내, 스튜디오)을 촬영해드립니다. 보정 및 사진편집이 기본 제공됩니다. 전문가가 직접 촬영합니다.</p>
+            </div>
+            <div class="pc-addon-price">₩249,000+</div>
+          </div>
+
+          <div class="pc-addon-shoot">
+            <div class="pc-shoot-col">
+              <p class="pc-shoot-head"><span class="pc-chip-sm pc-chip-green">D-C 라이트</span><strong>249,000원</strong></p>
+              <ul>
+                <li>스튜디오 촬영</li>
+                <li>프로필 사진 촬영</li>
+                <li>보정본 3장</li>
+                <li>원본 제공</li>
+                <li>1컨셉 / 1착장</li>
+                <li>프로필 영상 짧은 클립 포함</li>
+              </ul>
+            </div>
+            <div class="pc-shoot-col">
+              <p class="pc-shoot-head"><span class="pc-chip-sm pc-chip-green">D-C 베이직</span><strong>329,000원</strong></p>
+              <ul>
+                <li>스튜디오 촬영</li>
+                <li>프로필 사진 촬영</li>
+                <li>보정본 4장</li>
+                <li>원본 제공</li>
+                <li>2컨셉 / 2착장</li>
+                <li>전신 촬영 포함</li>
+                <li>프로필 영상 촬영 포함</li>
+                <li>연기연습용 짧은 영상 1종 포함</li>
+              </ul>
+            </div>
+            <div class="pc-shoot-col">
+              <p class="pc-shoot-head"><span class="pc-chip-sm pc-chip-green">D-C 시그니처</span><strong>429,000원</strong></p>
+              <ul>
+                <li>스튜디오 촬영</li>
+                <li>프로필 사진 촬영</li>
+                <li>보정본 6장</li>
+                <li>원본 제공</li>
+                <li>2~3컨셉 / 2착장 이상</li>
+                <li>전신 촬영 포함</li>
+                <li>프로필 영상 촬영 포함</li>
+                <li>연기연습영상 촬영 / 제작 포함</li>
+              </ul>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
 
