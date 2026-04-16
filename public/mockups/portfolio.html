@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEOYEON KIM — Actor Portfolio</title>
+  <style>
+    :root {
+      --bg: #0f0f10;
+      --bg-2: #16161a;
+      --ink: #f5f5f7;
+      --muted: #9a9aa3;
+      --rule: rgba(255,255,255,0.08);
+      --accent: #ff6a3d;
+      --link: #7cb8ff;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Pretendard', 'SF Pro KR', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      word-break: keep-all;
+    }
+    a { color: inherit; text-decoration: none; }
+    ::selection { background: var(--accent); color: #fff; }
+
+    .wrap { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
+
+    /* Nav */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      backdrop-filter: saturate(180%) blur(18px);
+      -webkit-backdrop-filter: saturate(180%) blur(18px);
+      background: rgba(15,15,16,0.6);
+      border-bottom: 1px solid var(--rule);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .brand {
+      font-weight: 700; font-size: 14px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+    }
+    .brand-mark {
+      display: inline-block;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent);
+      margin-right: 10px; vertical-align: middle;
+    }
+    .nav-links { display: flex; gap: 28px; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta {
+      font-size: 12px; font-weight: 600; padding: 10px 18px;
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 999px;
+      transition: background .18s, border-color .18s;
+    }
+    .nav-cta:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+    /* Hero */
+    .hero {
+      padding: 140px 0 100px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 40% at 75% 30%, rgba(255,106,61,0.14) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 56px;
+      align-items: end;
+      position: relative;
+      z-index: 1;
+    }
+    .hero .eyebrow {
+      font-size: 12px; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent); font-weight: 700;
+    }
+    .hero h1 {
+      margin: 18px 0 0;
+      font-size: clamp(52px, 8.5vw, 120px);
+      font-weight: 700; line-height: 0.98;
+      letter-spacing: -0.045em;
+    }
+    .hero h1 .last { color: var(--muted); }
+    .hero .role {
+      margin-top: 28px;
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 14px; color: var(--muted);
+    }
+    .hero .role span { padding: 6px 12px; border: 1px solid var(--rule); border-radius: 999px; }
+    .hero .lede {
+      margin-top: 28px;
+      font-size: 17px; line-height: 1.7; color: var(--muted);
+      max-width: 38ch;
+      letter-spacing: -0.005em;
+    }
+    .hero-portrait {
+      aspect-ratio: 3/4;
+      border-radius: 20px;
+      background:
+        radial-gradient(ellipse 60% 50% at 40% 30%, rgba(255,106,61,0.25) 0%, transparent 60%),
+        linear-gradient(160deg, #2a2a2d 0%, #1a1a1d 100%);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--rule);
+    }
+    .hero-portrait::after {
+      content: 'PORTRAIT';
+      position: absolute; top: 20px; left: 20px;
+      font-size: 10px; letter-spacing: 0.2em; font-weight: 700;
+      color: rgba(255,255,255,0.35);
+    }
+    .hero-portrait .tag {
+      position: absolute; bottom: 20px; left: 20px;
+      font-size: 11px; letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.55);
+      font-weight: 600;
+    }
+
+    /* Section shared */
+    section { padding: 100px 0; border-top: 1px solid var(--rule); }
+    .sec-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 44px; gap: 20px; flex-wrap: wrap;
+    }
+    .sec-head .num {
+      font-size: 12px; letter-spacing: 0.3em; color: var(--muted); font-weight: 700;
+    }
+    .sec-head h2 {
+      font-size: clamp(32px, 4.5vw, 52px);
+      font-weight: 700; letter-spacing: -0.035em; line-height: 1.08;
+      margin: 8px 0 0;
+    }
+    .sec-head .hint { font-size: 13px; color: var(--muted); }
+
+    /* Stats */
+    .stats {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+    }
+    .stat {
+      padding: 28px 20px;
+      border-right: 1px solid var(--rule);
+    }
+    .stat:last-child { border-right: 0; }
+    .stat .k { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+    .stat .v {
+      margin-top: 10px;
+      font-size: 24px; font-weight: 600; letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* About */
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+      align-items: start;
+    }
+    .about p { font-size: 17px; line-height: 1.8; color: var(--muted); letter-spacing: -0.005em; }
+    .about p + p { margin-top: 14px; }
+    .about .sig {
+      margin-top: 28px; font-size: 13px; color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    .skill-list { display: flex; flex-direction: column; gap: 14px; }
+    .skill {
+      display: grid; grid-template-columns: 140px 1fr 42px;
+      gap: 20px; align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .skill .name { font-size: 14px; font-weight: 600; letter-spacing: -0.005em; }
+    .skill .bar { height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; position: relative; }
+    .skill .bar::after {
+      content: '';
+      position: absolute; top: 0; left: 0; bottom: 0;
+      background: linear-gradient(90deg, var(--accent) 0%, #ff9066 100%);
+      width: var(--v);
+    }
+    .skill .lvl { text-align: right; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+    /* Works (filmography) */
+    .works-list { border-top: 1px solid var(--rule); }
+    .work {
+      display: grid; grid-template-columns: 80px 1fr 180px 120px;
+      gap: 24px; align-items: center;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--rule);
+      transition: background .2s;
+    }
+    .work:hover { background: rgba(255,255,255,0.02); }
+    .work .yr { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; font-weight: 600; letter-spacing: 0.02em; }
+    .work .title { font-size: 22px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.2; }
+    .work .title .sub { display: block; font-size: 13px; color: var(--muted); font-weight: 500; margin-top: 4px; letter-spacing: 0; }
+    .work .role { font-size: 13px; color: var(--muted); }
+    .work .type {
+      justify-self: end;
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+      font-weight: 700;
+      padding: 5px 11px; border-radius: 4px;
+      background: rgba(255,255,255,0.06);
+      color: var(--ink);
+    }
+    .work .type.film { background: rgba(255,106,61,0.15); color: #ffab85; }
+    .work .type.tv   { background: rgba(124,184,255,0.12); color: #9ec8ff; }
+    .work .type.ad   { background: rgba(154,205,50,0.12); color: #c2e37d; }
+
+    /* Gallery */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+    }
+    .shot {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      border: 1px solid var(--rule);
+    }
+    .shot:nth-child(1) { grid-column: span 3; aspect-ratio: 4/3; }
+    .shot:nth-child(2) { grid-column: span 3; aspect-ratio: 4/3; }
+    .shot:nth-child(3) { grid-column: span 2; }
+    .shot:nth-child(4) { grid-column: span 2; }
+    .shot:nth-child(5) { grid-column: span 2; }
+    .shot .bg {
+      position: absolute; inset: 0;
+    }
+    .shot:nth-child(1) .bg { background: radial-gradient(ellipse 70% 60% at 30% 35%, rgba(255,106,61,0.35) 0%, transparent 65%), linear-gradient(145deg, #1a1a1d 0%, #0e0e10 100%); }
+    .shot:nth-child(2) .bg { background: radial-gradient(ellipse 70% 60% at 70% 35%, rgba(120,140,255,0.3) 0%, transparent 65%), linear-gradient(145deg, #16161c 0%, #0d0d11 100%); }
+    .shot:nth-child(3) .bg { background: radial-gradient(ellipse 60% 60% at 50% 30%, rgba(200,90,240,0.22) 0%, transparent 65%), linear-gradient(145deg, #1a1a1d 0%, #0e0e10 100%); }
+    .shot:nth-child(4) .bg { background: radial-gradient(ellipse 60% 60% at 40% 70%, rgba(255,160,90,0.22) 0%, transparent 65%), linear-gradient(145deg, #1a1a1d 0%, #0e0e10 100%); }
+    .shot:nth-child(5) .bg { background: radial-gradient(ellipse 60% 60% at 60% 40%, rgba(90,200,210,0.22) 0%, transparent 65%), linear-gradient(145deg, #1a1a1d 0%, #0e0e10 100%); }
+    .shot .cap {
+      position: absolute; bottom: 14px; left: 16px;
+      font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+      font-weight: 700; color: rgba(255,255,255,0.55);
+    }
+    .shot .ix {
+      position: absolute; top: 14px; right: 16px;
+      font-size: 11px; color: rgba(255,255,255,0.35); font-weight: 600;
+      letter-spacing: 0.1em;
+    }
+
+    /* Contact */
+    .contact-grid {
+      display: grid; grid-template-columns: 1.1fr 0.9fr;
+      gap: 56px; align-items: start;
+    }
+    .contact h3 {
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 700; letter-spacing: -0.04em; line-height: 1.05;
+      margin: 0;
+    }
+    .contact h3 span { color: var(--muted); }
+    .contact p { font-size: 16px; line-height: 1.7; color: var(--muted); margin: 20px 0 0; max-width: 36ch; }
+    .contact .lines { display: flex; flex-direction: column; gap: 18px; }
+    .contact .line {
+      display: grid; grid-template-columns: 120px 1fr;
+      gap: 20px; align-items: baseline;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .contact .line .k { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+    .contact .line .v { font-size: 17px; font-weight: 500; letter-spacing: -0.01em; }
+    .contact .line .v a:hover { color: var(--accent); }
+
+    /* Footer */
+    footer {
+      padding: 32px 0 40px;
+      border-top: 1px solid var(--rule);
+      font-size: 12px; color: var(--muted);
+      display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    }
+    footer a:hover { color: var(--ink); }
+
+    @media (max-width: 900px) {
+      .hero { padding: 120px 0 60px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+      .hero-portrait { max-width: 420px; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .stat:nth-child(2) { border-right: 0; }
+      .stat:nth-child(1), .stat:nth-child(2) { border-bottom: 1px solid var(--rule); }
+      .about-grid { grid-template-columns: 1fr; gap: 36px; }
+      .work { grid-template-columns: 60px 1fr; row-gap: 4px; }
+      .work .role, .work .type { grid-column: 2; }
+      .work .type { justify-self: start; margin-top: 4px; }
+      .gallery { grid-template-columns: repeat(2, 1fr); }
+      .shot:nth-child(n) { grid-column: span 1; aspect-ratio: 3/4; }
+      .shot:nth-child(1), .shot:nth-child(2) { grid-column: span 2; aspect-ratio: 4/3; }
+      .contact-grid { grid-template-columns: 1fr; gap: 36px; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 560px) {
+      section { padding: 72px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a href="#" class="brand"><span class="brand-mark"></span>SEOYEON KIM</a>
+      <nav class="nav-links">
+        <a href="#about">About</a>
+        <a href="#works">Works</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a href="#contact" class="nav-cta">Get in touch</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">Actor · Seoul, KR</p>
+          <h1>Seoyeon<br/>Kim<span class="last">.</span></h1>
+          <div class="role">
+            <span>Actor</span>
+            <span>Voice</span>
+            <span>Model</span>
+          </div>
+          <p class="lede">
+            장면의 온도를 바꾸는 배우. 짧은 호흡에서 긴 독백까지, 말과 침묵 사이를 설계합니다.
+          </p>
+        </div>
+        <div class="hero-portrait">
+          <span class="tag">03 · BASIC · INT / DAY</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="num">01 — ABOUT</p>
+          <h2>소개</h2>
+        </div>
+        <p class="hint">last updated · 2026.04</p>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="k">Height</div><div class="v">168 cm</div></div>
+        <div class="stat"><div class="k">Build</div><div class="v">Slim Athletic</div></div>
+        <div class="stat"><div class="k">Voice</div><div class="v">Warm Alto</div></div>
+        <div class="stat"><div class="k">Base</div><div class="v">Seoul · KR</div></div>
+      </div>
+
+      <div class="about-grid" style="margin-top:56px;">
+        <div class="about">
+          <p>서울을 기반으로 활동하는 배우입니다. 연극 무대에서 시작해 단편 영화, 웹드라마, 광고까지 톤을 넓혀왔습니다. 결이 분명한 인물과, 결을 숨긴 인물 사이를 오가는 작업을 좋아합니다.</p>
+          <p>카메라 앞의 리듬과 현장의 호흡을 중요하게 여기며, 텍스트를 해체해 다시 읽는 과정을 즐깁니다.</p>
+          <p class="sig">— 김서연 · Represented by <strong style="color:var(--ink);">NONE · Freelance</strong></p>
+        </div>
+        <div class="skill-list">
+          <div class="skill" style="--v:90%;"><div class="name">Acting · Drama</div><div class="bar"></div><div class="lvl">A+</div></div>
+          <div class="skill" style="--v:82%;"><div class="name">Acting · Comedy</div><div class="bar"></div><div class="lvl">A</div></div>
+          <div class="skill" style="--v:74%;"><div class="name">Voice · Narration</div><div class="bar"></div><div class="lvl">B+</div></div>
+          <div class="skill" style="--v:66%;"><div class="name">Dance · Contemporary</div><div class="bar"></div><div class="lvl">B</div></div>
+          <div class="skill" style="--v:88%;"><div class="name">Language · English</div><div class="bar"></div><div class="lvl">A</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="works">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="num">02 — WORKS</p>
+          <h2>출연작</h2>
+        </div>
+        <p class="hint">2022 — 2026</p>
+      </div>
+
+      <div class="works-list">
+        <div class="work">
+          <div class="yr">2026</div>
+          <div class="title">그 계절의 끝<span class="sub">independent short film · 28min</span></div>
+          <div class="role">주연 · 수민 역</div>
+          <div class="type film">FILM</div>
+        </div>
+        <div class="work">
+          <div class="yr">2025</div>
+          <div class="title">기억을 접는 사람들<span class="sub">web drama · 8 episodes</span></div>
+          <div class="role">조연 · 연희 역</div>
+          <div class="type tv">DRAMA</div>
+        </div>
+        <div class="work">
+          <div class="yr">2025</div>
+          <div class="title">FILA 2025 SS Campaign<span class="sub">digital · TVC</span></div>
+          <div class="role">메인 모델</div>
+          <div class="type ad">AD</div>
+        </div>
+        <div class="work">
+          <div class="yr">2024</div>
+          <div class="title">무언의 편지<span class="sub">national theatre · 60min</span></div>
+          <div class="role">주연 · 예린 역</div>
+          <div class="type film">STAGE</div>
+        </div>
+        <div class="work">
+          <div class="yr">2024</div>
+          <div class="title">KB국민 — 청춘편<span class="sub">brand film</span></div>
+          <div class="role">보이스 · 내레이션</div>
+          <div class="type ad">AD</div>
+        </div>
+        <div class="work">
+          <div class="yr">2023</div>
+          <div class="title">빛이 오래 닿는 방<span class="sub">student feature · 72min</span></div>
+          <div class="role">조연 · 은혜 역</div>
+          <div class="type film">FILM</div>
+        </div>
+        <div class="work">
+          <div class="yr">2022</div>
+          <div class="title">오디션 101<span class="sub">workshop showcase</span></div>
+          <div class="role">앙상블</div>
+          <div class="type film">STAGE</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="num">03 — GALLERY</p>
+          <h2>포트폴리오</h2>
+        </div>
+        <p class="hint">5 selected · 2025 — 2026</p>
+      </div>
+
+      <div class="gallery">
+        <div class="shot"><div class="bg"></div><span class="ix">N° 01</span><span class="cap">PROFILE · WARM</span></div>
+        <div class="shot"><div class="bg"></div><span class="ix">N° 02</span><span class="cap">EDITORIAL · COOL</span></div>
+        <div class="shot"><div class="bg"></div><span class="ix">N° 03</span><span class="cap">STUDIO · B&W</span></div>
+        <div class="shot"><div class="bg"></div><span class="ix">N° 04</span><span class="cap">OUTDOOR · GOLD</span></div>
+        <div class="shot"><div class="bg"></div><span class="ix">N° 05</span><span class="cap">CONCEPT · TEAL</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="wrap">
+      <div class="contact-grid">
+        <div>
+          <p class="num" style="font-size:12px;letter-spacing:0.3em;color:var(--muted);font-weight:700;">04 — CONTACT</p>
+          <h3>함께 작업할<br/>장면을 <span>기다립니다.</span></h3>
+          <p>오디션 초청 · 촬영 문의 · 매니지먼트 논의 모두 편하게 연락주세요. 평일 12시간 내 회신드립니다.</p>
+        </div>
+        <div class="lines">
+          <div class="line"><div class="k">Email</div><div class="v"><a href="mailto:seoyeon.kim@portfolio.kr">seoyeon.kim@portfolio.kr</a></div></div>
+          <div class="line"><div class="k">Phone</div><div class="v">+82 10 0000 0000</div></div>
+          <div class="line"><div class="k">Instagram</div><div class="v"><a href="#">@seoyeon.kim</a></div></div>
+          <div class="line"><div class="k">Reel</div><div class="v"><a href="#">vimeo.com/seoyeon-kim</a></div></div>
+          <div class="line"><div class="k">Based in</div><div class="v">Seoul, South Korea</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap" style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+      <span>© 2026 Seoyeon Kim. All rights reserved.</span>
+      <span>Designed by <a href="https://lemondrop.space" style="color:var(--accent);">SKR Studio</a></span>
+    </div>
+  </footer>
+
+</body>
+</html>
