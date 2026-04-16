@@ -107,7 +107,7 @@
                   <input id="buyerPhone" class="form-input" placeholder="전화번호 *" />
                   <input id="buyerEmail" class="form-input" placeholder="이메일 *" />
                   <select id="buyerType" class="form-input" style="color:#1d1d1f;">
-                    <option value="" disabled selected>신청자 유형 *</option>
+                    <option value="" selected>신청자 유형 (선택)</option>
                     <option value="배우">배우</option>
                     <option value="가수">가수</option>
                     <option value="모델">모델</option>
@@ -520,7 +520,7 @@
     // ── Submit flow ──
     document.getElementById('submitOrderBtn').addEventListener('click', () => {
       const v = (id) => document.getElementById(id)?.value?.trim() || '';
-      if (!v('buyerName')||!v('buyerPhone')||!v('buyerEmail')||!document.getElementById('buyerType').value||!v('buyerDepositorName')||!v('buyerRefundAccount')||!v('buyerRefundHolder')) {
+      if (!v('buyerName')||!v('buyerPhone')||!v('buyerEmail')||!v('buyerDepositorName')||!v('buyerRefundAccount')||!v('buyerRefundHolder')) {
         alert('필수 항목을 모두 입력해주세요.');
         return;
       }
