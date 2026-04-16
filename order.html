@@ -114,6 +114,7 @@
                     <option value="기타">기타</option>
                   </select>
                   <input id="buyerDepositorName" class="form-input" placeholder="입금자명 *" />
+                  <input id="buyerRefundBank" class="form-input" placeholder="환불 은행명 *" />
                   <input id="buyerRefundAccount" class="form-input" placeholder="환불 계좌번호 *" />
                   <input id="buyerRefundHolder" class="form-input" placeholder="예금주명 *" style="grid-column:span 2;" />
                 </div>
@@ -475,7 +476,7 @@
       const disc = getDiscountAmount();
       el.innerHTML = `
         <div style="display:grid;gap:6px;">
-          ${[['이름',v('buyerName')],['전화번호',v('buyerPhone')],['이메일',v('buyerEmail')],['신청자 유형',v('buyerType')],['입금자명',v('buyerDepositorName')],['환불 계좌',v('buyerRefundAccount')+' ('+v('buyerRefundHolder')+')'],['선택 패키지',state.pkg?.name||'선택 안함'],['추가 옵션',getOptionNames()]].map(([k,val])=>`<div style="display:flex;gap:8px;"><span style="color:#6e6e73;min-width:100px;flex-shrink:0;">${k}</span><strong>${val}</strong></div>`).join('')}
+          ${[['이름',v('buyerName')],['전화번호',v('buyerPhone')],['이메일',v('buyerEmail')],['신청자 유형',v('buyerType')],['입금자명',v('buyerDepositorName')],['환불 계좌',v('buyerRefundBank')+' '+v('buyerRefundAccount')+' ('+v('buyerRefundHolder')+')'],['선택 패키지',state.pkg?.name||'선택 안함'],['추가 옵션',getOptionNames()]].map(([k,val])=>`<div style="display:flex;gap:8px;"><span style="color:#6e6e73;min-width:100px;flex-shrink:0;">${k}</span><strong>${val}</strong></div>`).join('')}
           ${disc>0?`<div style="display:flex;gap:8px;"><span style="color:#6e6e73;min-width:100px;flex-shrink:0;">학생 할인</span><strong style="color:#1a9655;">–${formatPrice(disc)}</strong></div>`:''}
           <div style="display:flex;gap:8px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.08);margin-top:6px;"><span style="color:#6e6e73;min-width:100px;flex-shrink:0;">총 금액</span><strong style="font-size:20px;letter-spacing:-0.03em;color:#0071e3;">${formatPrice(getTotalPrice())}</strong></div>
         </div>
@@ -529,7 +530,7 @@
     // ── Submit flow ──
     document.getElementById('submitOrderBtn').addEventListener('click', () => {
       const v = (id) => document.getElementById(id)?.value?.trim() || '';
-      if (!v('buyerName')||!v('buyerPhone')||!v('buyerEmail')||!v('buyerDepositorName')||!v('buyerRefundAccount')||!v('buyerRefundHolder')) {
+      if (!v('buyerName')||!v('buyerPhone')||!v('buyerEmail')||!v('buyerDepositorName')||!v('buyerRefundBank')||!v('buyerRefundAccount')||!v('buyerRefundHolder')) {
         alert('필수 항목을 모두 입력해주세요.');
         return;
       }
@@ -559,7 +560,7 @@
         createdAt: new Date().toISOString(),
         name: v('buyerName'), phone: v('buyerPhone'), email: v('buyerEmail'),
         type: v('buyerType'), depositorName: v('buyerDepositorName'),
-        refundAccount: v('buyerRefundAccount'), refundHolder: v('buyerRefundHolder'),
+        refundBank: v('buyerRefundBank'), refundAccount: v('buyerRefundAccount'), refundHolder: v('buyerRefundHolder'),
         instagram: v('buyerInstagram'), agency: v('buyerAgency'), note: v('buyerNote'),
         packageName: state.pkg?.name||'', optionNames: getOptionNames(),
         studentDiscount: getStudentDiscount(), discountAmount: formatPrice(getDiscountAmount()),

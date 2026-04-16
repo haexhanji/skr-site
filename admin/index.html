@@ -373,7 +373,7 @@
             <div><strong>유형:</strong> ${dash(order.type)}</div>
             <div><strong>입금자명:</strong> ${dash(order.depositorName)}</div>
             <div><strong>패키지:</strong> ${dash(order.packageName)}</div>
-            <div style="grid-column:span 2;"><strong>환불 계좌:</strong> ${dash(order.refundAccount)}${order.refundHolder ? ` (${esc(order.refundHolder)})` : ''}</div>
+            <div style="grid-column:span 2;"><strong>환불 계좌:</strong> ${dash(order.refundBank)} ${dash(order.refundAccount)}${order.refundHolder ? ` (${esc(order.refundHolder)})` : ''}</div>
             <div><strong>인스타그램:</strong> ${dash(order.instagram)}</div>
             <div><strong>소속사:</strong> ${dash(order.agency)}</div>
             <div style="grid-column:span 2;"><strong>추가 옵션:</strong> ${dash(order.optionNames || '없음')}</div>
