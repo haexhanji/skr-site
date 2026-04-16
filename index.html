@@ -470,99 +470,164 @@
     }
     #homeDetailStack img { display: block; width: 100%; height: auto; }
 
-    /* ——— Pricing comparison table ——— */
-    .pricing-compare { padding: 40px 0 120px; }
-    .pricing-compare .wrap { width: min(1120px, calc(100% - 32px)); }
-    .pc-grid {
-      display: grid;
-      grid-template-columns: 140px 1fr 1fr 1fr;
-      gap: 0;
-      border: 1px solid var(--rule);
-      border-radius: 24px;
-      padding: 24px;
-      background: #fff;
-      row-gap: 0;
-    }
-    .pc-cell {
-      padding: 20px 16px;
-      display: flex; align-items: center; justify-content: center;
-      text-align: center;
-      font-size: 15px; font-weight: 500; letter-spacing: -0.01em;
-      color: var(--ink);
-      border-bottom: 1px solid var(--rule);
-    }
-    /* Remove inherited borders on last visual row */
-    .pc-grid > .pc-cell:nth-last-child(-n+4) { border-bottom: 0; }
+    /* ——— Pricing compare (A/B/C + D addon) ——— */
+    .pricing-compare { padding: 24px 0 120px; }
+    .pricing-compare .wrap { width: min(1180px, calc(100% - 32px)); }
+    .pc-note { text-align: center; font-size: 14px; font-weight: 600; color: var(--ink); margin: 16px 0 32px; letter-spacing: -0.01em; }
 
-    .pc-label {
-      font-size: 14px; color: var(--muted); font-weight: 600;
-      justify-content: flex-start; text-align: left;
-    }
-    .pc-label.align-top { align-items: flex-start; padding-top: 28px; }
-    .pc-h-label { border-bottom: 0; }
-    .pc-cta-spacer { border-bottom: 0; }
+    .pc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
 
-    /* Header cells (plan name + price) */
-    .pc-h {
-      flex-direction: column; gap: 6px;
+    .pc-card {
       background: var(--bg-card);
-      border-radius: 16px;
-      margin: 0 6px 12px;
-      padding: 22px 14px;
-      border-bottom: 0;
+      border-radius: 22px;
+      padding: 26px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 20px;
     }
-    .pc-tag { margin: 0; font-size: 14px; font-weight: 500; color: var(--muted); letter-spacing: -0.01em; }
-    .pc-price { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); }
-
-    /* Description cells */
-    .pc-desc {
-      flex-direction: column; gap: 8px;
-      align-items: flex-start; justify-content: flex-start; text-align: left;
-      padding-top: 24px; padding-bottom: 28px;
-      font-weight: 500;
+    .pc-card.pc-card-wide { align-items: flex-start; }
+    .pc-card-main { flex: 1; min-width: 0; }
+    .pc-card h3 {
+      margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.025em; color: var(--ink);
+      display: flex; align-items: baseline; gap: 8px;
     }
-    .pc-desc strong { font-size: 15px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); }
-    .pc-desc p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--muted); font-weight: 500; }
+    .pc-badge {
+      color: var(--ink); font-weight: 700; letter-spacing: -0.01em;
+    }
+    .pc-badge.pc-badge-d { color: var(--ink); }
+    .pc-sub {
+      margin: 8px 0 0; font-size: 13px; color: var(--muted); line-height: 1.6;
+    }
 
-    /* CTA */
-    .pc-cta { padding-top: 22px; padding-bottom: 4px; border-bottom: 0; }
+    .pc-variants { margin-top: 18px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .pc-variants-label { font-size: 13px; color: var(--link); font-weight: 600; }
+    .pc-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fff; border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 999px;
+      padding: 4px 12px 4px 4px;
+      font-size: 12px; font-weight: 500; color: var(--ink);
+    }
+    .pc-chip em {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #1d1d1f; color: #fff;
+      font-style: normal; font-weight: 700; font-size: 11px;
+      padding: 3px 8px; border-radius: 999px;
+      letter-spacing: 0.02em;
+    }
+
+    .pc-card-price {
+      font-size: 28px; font-weight: 700; letter-spacing: -0.03em; color: var(--ink);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .pc-card-right {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 14px;
+      flex-shrink: 0;
+    }
+
+    /* D) 추가 패키지 */
+    .pc-addon {
+      margin-top: 40px;
+      background: #eaf1fe;
+      border-radius: 24px;
+      padding: 36px 40px;
+    }
+    .pc-addon-title {
+      margin: 0 0 24px;
+      font-size: 22px; font-weight: 700; letter-spacing: -0.025em;
+      display: inline-flex; align-items: baseline; gap: 8px;
+    }
+    .pc-addon-item {
+      display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+    .pc-addon-name {
+      margin: 0 0 8px;
+      font-size: 15px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink);
+      display: inline-flex; align-items: center; gap: 10px;
+    }
+    .pc-chip-sm {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #1d1d1f; color: #fff;
+      font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 999px;
+      letter-spacing: 0.02em;
+    }
+    .pc-chip-sm.pc-chip-green { background: #1a9655; }
+    .pc-addon-desc {
+      margin: 0;
+      font-size: 13px; line-height: 1.7; color: #4b5060;
+    }
+    .pc-addon-price {
+      font-size: 22px; font-weight: 700; letter-spacing: -0.03em; color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .pc-addon-shoot {
+      margin-top: 24px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .pc-shoot-col {
+      background: transparent;
+    }
+    .pc-shoot-head {
+      margin: 0 0 14px;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 14px;
+    }
+    .pc-shoot-head strong { font-weight: 700; color: #1a9655; font-size: 15px; letter-spacing: -0.01em; }
+    .pc-shoot-col ul {
+      margin: 0; padding: 0; list-style: none;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .pc-shoot-col li {
+      font-size: 13px; color: var(--ink); letter-spacing: -0.01em;
+      padding-left: 14px; position: relative; line-height: 1.4;
+    }
+    .pc-shoot-col li::before {
+      content: '·'; position: absolute; left: 4px; top: -2px;
+      font-size: 18px; color: var(--ink);
+    }
+
+    .pc-cta-wrap { display: flex; justify-content: center; margin-top: 36px; }
     .pc-btn {
       display: inline-flex; align-items: center; justify-content: center;
-      width: 100%;
-      height: 48px;
+      min-width: 220px; height: 52px; padding: 0 36px;
       border-radius: 999px;
       background: var(--ink); color: #fff;
-      font-size: 14px; font-weight: 600; letter-spacing: -0.005em;
+      font-size: 15px; font-weight: 600; letter-spacing: -0.005em;
       transition: background .18s, transform .18s;
     }
     .pc-btn:hover { background: #333; transform: translateY(-1px); }
     .pc-btn:active { transform: scale(0.98); }
 
     @media (max-width: 860px) {
-      .pc-grid {
-        grid-template-columns: 1fr 1fr 1fr;
-        padding: 16px;
-      }
-      /* Hide label column on mobile, show labels inline instead */
-      .pc-label, .pc-h-label, .pc-cta-spacer { display: none; }
-      .pc-cell { padding: 14px 10px; font-size: 14px; }
-      .pc-h { margin: 0 4px 10px; padding: 16px 10px; }
-      .pc-tag { font-size: 12px; }
-      .pc-price { font-size: 17px; }
-      .pc-desc { padding: 16px 10px 18px; }
-      .pc-desc strong { font-size: 14px; }
-      .pc-desc p { font-size: 12px; }
-      .pc-btn { height: 42px; font-size: 13px; }
+      .pc-row { grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
+      .pc-card { padding: 22px 22px; flex-direction: column; align-items: flex-start; gap: 16px; }
+      .pc-card.pc-card-wide { align-items: flex-start; }
+      .pc-card-right { align-items: flex-start; }
+      .pc-card h3 { font-size: 20px; }
+      .pc-card-price { font-size: 24px; }
+      .pc-addon { padding: 24px 22px; border-radius: 20px; }
+      .pc-addon-title { font-size: 19px; margin-bottom: 16px; }
+      .pc-addon-item { grid-template-columns: 1fr; gap: 8px; padding: 16px 0; }
+      .pc-addon-price { font-size: 19px; }
+      .pc-addon-shoot { grid-template-columns: 1fr; gap: 20px; }
     }
     @media (max-width: 480px) {
-      .pricing-compare .wrap { width: calc(100% - 16px); }
-      .pc-grid { padding: 10px; border-radius: 18px; }
-      .pc-cell { padding: 10px 6px; font-size: 13px; }
-      .pc-h { margin: 0 2px 8px; padding: 12px 8px; }
-      .pc-tag { font-size: 11px; }
-      .pc-price { font-size: 15px; }
-      .pc-desc strong { font-size: 13px; }
-      .pc-desc p { font-size: 11.5px; line-height: 1.55; }
+      .pricing-compare .wrap { width: calc(100% - 20px); }
+      .pc-card { padding: 18px 18px; border-radius: 18px; }
+      .pc-card h3 { font-size: 18px; }
+      .pc-sub { font-size: 12.5px; }
+      .pc-chip { font-size: 11px; }
+      .pc-chip em { font-size: 10px; }
+      .pc-card-price { font-size: 22px; }
+      .pc-addon { padding: 20px 18px; }
+      .pc-addon-name { font-size: 14px; }
+      .pc-addon-desc { font-size: 12px; }
+      .pc-addon-price { font-size: 17px; }
+      .pc-shoot-col li { font-size: 12.5px; }
     }
 
     /* ——— Right-side rail CTA ——— */
@@ -837,66 +902,125 @@
   <!-- Pricing comparison -->
   <section class="pricing-compare">
     <div class="wrap">
-      <div class="pc-grid">
-        <!-- Header row -->
-        <div class="pc-cell pc-h-label"></div>
-        <div class="pc-cell pc-h">
-          <p class="pc-tag">A) 학생 할인형</p>
-          <p class="pc-price">25,000원</p>
+      <p class="pc-note">*매수는 상담을 통해 결정됩니다!!</p>
+
+      <div class="pc-row">
+        <!-- A -->
+        <article class="pc-card">
+          <div class="pc-card-main">
+            <h3><span class="pc-badge">A)</span> 학생 할인형</h3>
+            <p class="pc-sub">고등학생/대학생 배우/모델분들께, 부담없이</p>
+            <div class="pc-variants">
+              <span class="pc-variants-label">선택)</span>
+              <span class="pc-chip"><em>A-A</em>기본 2장</span>
+              <span class="pc-chip"><em>A-B</em>슬림 1장</span>
+            </div>
+          </div>
+          <div class="pc-card-price">₩25,000</div>
+        </article>
+
+        <!-- B -->
+        <article class="pc-card">
+          <div class="pc-card-main">
+            <h3><span class="pc-badge">B)</span> 프리셋 기본형</h3>
+            <p class="pc-sub">프리셋으로 더 빠르게, 기본이지만 확실하게</p>
+            <div class="pc-variants">
+              <span class="pc-variants-label">선택)</span>
+              <span class="pc-chip"><em>B-A</em>기본 2장</span>
+              <span class="pc-chip"><em>B-B</em>슬림 1장</span>
+            </div>
+          </div>
+          <div class="pc-card-price">₩40,000</div>
+        </article>
+      </div>
+
+      <!-- C full width -->
+      <article class="pc-card pc-card-wide">
+        <div class="pc-card-main">
+          <h3><span class="pc-badge">C)</span> 맞춤형</h3>
+          <p class="pc-sub">개인 1:1 맞춤형 제작, 퍼스널 컬러에 맞춘 컴카드&amp;사진보정<br/>프리셋이 아닌 고객 맞춤형으로 컴카드를 제작합니다.</p>
         </div>
-        <div class="pc-cell pc-h">
-          <p class="pc-tag">B) 프리셋 기본형</p>
-          <p class="pc-price">40,000원</p>
+        <div class="pc-card-right">
+          <div class="pc-card-price">₩70,000</div>
+          <div class="pc-variants">
+            <span class="pc-variants-label">선택)</span>
+            <span class="pc-chip"><em>C-A</em>맞춤형 2장</span>
+            <span class="pc-chip"><em>C-B</em>맞춤형 슬림 1장</span>
+          </div>
         </div>
-        <div class="pc-cell pc-h">
-          <p class="pc-tag">C) 맞춤형</p>
-          <p class="pc-price">70,000원</p>
+      </article>
+
+      <!-- D) 추가 패키지 -->
+      <section class="pc-addon">
+        <h3 class="pc-addon-title"><span class="pc-badge pc-badge-d">D)</span> 추가 패키지</h3>
+
+        <div class="pc-addon-item">
+          <div>
+            <p class="pc-addon-name"><span class="pc-chip-sm">D-A</span>개인 웹사이트 제작</p>
+            <p class="pc-addon-desc">개인 포트폴리오용 감각적인 웹사이트를 제작해드립니다. (도메인 1년마다 갱신 필요.)</p>
+          </div>
+          <div class="pc-addon-price">₩100,000</div>
         </div>
 
-        <!-- Description row -->
-        <div class="pc-cell pc-label align-top">패키지 설명</div>
-        <div class="pc-cell pc-desc">
-          <strong>학생이니까 더 저렴하게</strong>
-          <p>고등학생/대학생 배우/모델분들께, 부담없이</p>
-        </div>
-        <div class="pc-cell pc-desc">
-          <strong>기본형</strong>
-          <p>프리셋으로 더 빠르게, 기본이지만 확실하게</p>
-        </div>
-        <div class="pc-cell pc-desc">
-          <strong>개인 맞춤형 프리미엄</strong>
-          <p>개인 1:1 맞춤형 제작, 퍼스널 컬러에 맞춘 컴카드&amp;사진보정. 프리셋이 아닌 고객 맞춤형으로 컴카드를 제작합니다.</p>
+        <div class="pc-addon-item">
+          <div>
+            <p class="pc-addon-name"><span class="pc-chip-sm">D-B</span>포트폴리오 영상제작</p>
+            <p class="pc-addon-desc">포트폴리오 영상을 제작해드립니다. (기존 연기영상 편집 + 포트폴리오용 영상/영화제작 · 1분 이내/협의)<br/>촬영을 직접 진행하며, 1분 이내의 영화같은 연기영상을 제작해드립니다. 상담을 통해 내용이나 가격이 수정/추가될 수 있습니다.</p>
+          </div>
+          <div class="pc-addon-price">₩200,000</div>
         </div>
 
-        <!-- 시안개수 -->
-        <div class="pc-cell pc-label">시안개수</div>
-        <div class="pc-cell">1개</div>
-        <div class="pc-cell">1개</div>
-        <div class="pc-cell">3개</div>
+        <div class="pc-addon-item pc-addon-item-tall">
+          <div>
+            <p class="pc-addon-name"><span class="pc-chip-sm">D-C</span>프로필 사진 촬영 패키지</p>
+            <p class="pc-addon-desc">프로필 사진(스튜디오) + 프로필 영상(30초 이내, 스튜디오)을 촬영해드립니다. 보정 및 사진편집이 기본 제공됩니다. 전문가가 직접 촬영합니다.</p>
+          </div>
+          <div class="pc-addon-price">₩249,000+</div>
+        </div>
 
-        <!-- 페이지 수 -->
-        <div class="pc-cell pc-label">페이지 수(최대)</div>
-        <div class="pc-cell">2장(선택)</div>
-        <div class="pc-cell">2장(선택)</div>
-        <div class="pc-cell">4장(선택)</div>
+        <div class="pc-addon-shoot">
+          <div class="pc-shoot-col">
+            <p class="pc-shoot-head"><span class="pc-chip-sm pc-chip-green">D-C 라이트</span><strong>249,000원</strong></p>
+            <ul>
+              <li>스튜디오 촬영</li>
+              <li>프로필 사진 촬영</li>
+              <li>보정본 3장</li>
+              <li>원본 제공</li>
+              <li>1컨셉 / 1착장</li>
+              <li>프로필 영상 짧은 클립 포함</li>
+            </ul>
+          </div>
+          <div class="pc-shoot-col">
+            <p class="pc-shoot-head"><span class="pc-chip-sm pc-chip-green">D-C 베이직</span><strong>329,000원</strong></p>
+            <ul>
+              <li>스튜디오 촬영</li>
+              <li>프로필 사진 촬영</li>
+              <li>보정본 4장</li>
+              <li>원본 제공</li>
+              <li>2컨셉 / 2착장</li>
+              <li>전신 촬영 포함</li>
+              <li>프로필 영상 촬영 포함</li>
+              <li>연기연습용 짧은 영상 1종 포함</li>
+            </ul>
+          </div>
+          <div class="pc-shoot-col">
+            <p class="pc-shoot-head"><span class="pc-chip-sm pc-chip-green">D-C 시그니처</span><strong>429,000원</strong></p>
+            <ul>
+              <li>스튜디오 촬영</li>
+              <li>프로필 사진 촬영</li>
+              <li>보정본 6장</li>
+              <li>원본 제공</li>
+              <li>2~3컨셉 / 2착장 이상</li>
+              <li>전신 촬영 포함</li>
+              <li>프로필 영상 촬영 포함</li>
+              <li>연기연습영상 촬영 / 제작 포함</li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
-        <!-- 작업일 -->
-        <div class="pc-cell pc-label">작업일</div>
-        <div class="pc-cell">2일</div>
-        <div class="pc-cell">3일</div>
-        <div class="pc-cell">4일</div>
-
-        <!-- 수정 횟수 -->
-        <div class="pc-cell pc-label">수정 횟수</div>
-        <div class="pc-cell">1회</div>
-        <div class="pc-cell">2회</div>
-        <div class="pc-cell">3회</div>
-
-        <!-- CTA row -->
-        <div class="pc-cell pc-cta-spacer"></div>
-        <div class="pc-cell pc-cta"><a href="./order.html?pkg=student" class="pc-btn">구매하기</a></div>
-        <div class="pc-cell pc-cta"><a href="./order.html?pkg=basic" class="pc-btn">구매하기</a></div>
-        <div class="pc-cell pc-cta"><a href="./order.html?pkg=signature" class="pc-btn">구매하기</a></div>
+      <div class="pc-cta-wrap">
+        <a href="./order.html" class="pc-btn">구매하기</a>
       </div>
     </div>
   </section>
