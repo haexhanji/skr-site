@@ -37,6 +37,7 @@
       <nav style="display:flex;flex-direction:column;gap:4px;">
         <a href="#global" style="padding:9px 12px;border-radius:10px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);">글로벌 설정</a>
         <a href="#orders" style="padding:9px 12px;border-radius:10px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);">구매 신청 내역</a>
+        <a href="#visitLogs" style="padding:9px 12px;border-radius:10px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);">방문 로그</a>
         <a href="#homeSection" style="padding:9px 12px;border-radius:10px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);">메인 페이지</a>
         <a href="#pricingSection" style="padding:9px 12px;border-radius:10px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);">가격 페이지</a>
         <a href="#faqSection" style="padding:9px 12px;border-radius:10px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);">자주 묻는 질문</a>
@@ -87,6 +88,32 @@
               <button type="button" id="clearOrdersBtn" style="padding:8px 16px;border-radius:10px;border:1.5px solid #fecaca;background:#fff5f5;color:#dc2626;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">전체 삭제</button>
             </div>
             <div id="orderSubmissionList"></div>
+          </section>
+
+          <!-- 방문 로그 -->
+          <section id="visitLogs" style="background:#fff;border-radius:20px;padding:28px;border:1px solid rgba(0,0,0,0.07);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+              <h2 style="font-size:17px;font-weight:700;letter-spacing:-0.02em;">방문 로그</h2>
+              <div style="display:flex;gap:8px;">
+                <button type="button" id="refreshLogsBtn" style="padding:8px 16px;border-radius:10px;border:1.5px solid rgba(0,0,0,0.1);background:#fff;color:#1d1d1f;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">새로고침</button>
+                <button type="button" id="clearLogsBtn" style="padding:8px 16px;border-radius:10px;border:1.5px solid #fecaca;background:#fff5f5;color:#dc2626;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">전체 삭제</button>
+              </div>
+            </div>
+            <div id="logSummary" style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;">
+              <div style="background:#f8f8fa;border-radius:12px;padding:14px 18px;flex:1;min-width:120px;">
+                <p style="font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:0.1em;">총 방문</p>
+                <p id="logTotal" style="font-size:24px;font-weight:700;margin-top:4px;">-</p>
+              </div>
+              <div style="background:#f8f8fa;border-radius:12px;padding:14px 18px;flex:1;min-width:120px;">
+                <p style="font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:0.1em;">고유 IP</p>
+                <p id="logUnique" style="font-size:24px;font-weight:700;margin-top:4px;">-</p>
+              </div>
+              <div style="background:#f8f8fa;border-radius:12px;padding:14px 18px;flex:1;min-width:120px;">
+                <p style="font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:0.1em;">오늘</p>
+                <p id="logToday" style="font-size:24px;font-weight:700;margin-top:4px;">-</p>
+              </div>
+            </div>
+            <div id="logList"></div>
           </section>
 
           <!-- 메인 페이지 -->
@@ -765,7 +792,55 @@
     }
 
     /* ─── Init ───────────────────────────────────────────────────── */
-    function initAdmin() { fillForm(); }
+    /* ─── Visit logs ─────────────────────────────────────────────── */
+    async function renderLogs() {
+      const list = document.getElementById('logList');
+      list.innerHTML = '<div style="padding:12px;font-size:13px;color:#9ca3af;">불러오는 중...</div>';
+      try {
+        const r = await fetch('/api/admin/logs', { credentials: 'same-origin' });
+        const j = await r.json();
+        if (!j.ok) { list.innerHTML = '<div style="padding:12px;font-size:13px;color:#dc2626;">로드 실패</div>'; return; }
+        document.getElementById('logTotal').textContent = j.summary?.total ?? '-';
+        document.getElementById('logUnique').textContent = j.summary?.unique_ips ?? '-';
+        document.getElementById('logToday').textContent = j.summary?.today ?? '-';
+        const visits = j.visits || [];
+        if (!visits.length) { list.innerHTML = '<div style="padding:12px;font-size:13px;color:#9ca3af;">방문 기록이 없습니다.</div>'; return; }
+        list.innerHTML = `
+          <div style="display:grid;grid-template-columns:160px 1fr 140px 110px;gap:4px 14px;font-size:12px;font-weight:600;color:#9ca3af;padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
+            <span>시간</span><span>페이지</span><span>유입 경로</span><span>IP</span>
+          </div>
+        `;
+        visits.forEach((v) => {
+          const t = v.created_at ? new Date(v.created_at).toLocaleString('ko-KR', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' }) : '-';
+          const ref = v.referrer ? new URL(v.referrer, 'https://x').hostname.replace('x','직접') : '직접';
+          const ip = v.ip ? v.ip.replace(/(\d+)\.(\d+)\.(\d+)\.(\d+)/, '$1.$2.***.$4') : '-';
+          const ua = v.ua || '';
+          const device = /Mobile|iPhone|Android/i.test(ua) ? '📱' : '💻';
+          const row = document.createElement('div');
+          row.style.cssText = 'display:grid;grid-template-columns:160px 1fr 140px 110px;gap:4px 14px;font-size:13px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.04);align-items:center;';
+          row.innerHTML = `
+            <span style="color:#6e6e73;font-variant-numeric:tabular-nums;">${esc(t)}</span>
+            <span style="font-weight:500;">${device} ${esc(v.path || '/')}</span>
+            <span style="color:#6e6e73;font-size:12px;">${esc(ref)}</span>
+            <span style="color:#9ca3af;font-size:11px;font-variant-numeric:tabular-nums;">${esc(ip)}</span>
+          `;
+          list.appendChild(row);
+        });
+      } catch (e) {
+        list.innerHTML = '<div style="padding:12px;font-size:13px;color:#dc2626;">로드 실패</div>';
+      }
+    }
+
+    document.getElementById('refreshLogsBtn').addEventListener('click', () => renderLogs());
+    document.getElementById('clearLogsBtn').addEventListener('click', async () => {
+      if (!confirm('방문 로그를 전체 삭제할까요?')) return;
+      try {
+        await fetch('/api/admin/logs', { method: 'DELETE', credentials: 'same-origin' });
+      } catch {}
+      renderLogs();
+    });
+
+    function initAdmin() { fillForm(); renderLogs(); }
   </script>
 </body>
 </html>

@@ -19,3 +19,14 @@ CREATE TABLE IF NOT EXISTS orders (
 );
 
 CREATE INDEX IF NOT EXISTS orders_created_at_idx ON orders (created_at DESC);
+
+CREATE TABLE IF NOT EXISTS visits (
+  id         BIGSERIAL PRIMARY KEY,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  path       TEXT,
+  referrer   TEXT,
+  ua         TEXT,
+  ip         TEXT
+);
+
+CREATE INDEX IF NOT EXISTS visits_created_at_idx ON visits (created_at DESC);

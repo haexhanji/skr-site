@@ -213,7 +213,19 @@ window.setSkrContent = async function setSkrContent(nextContent) {
 };
 
 window.resetSkrContent = async function resetSkrContent() {
-  // Reset = overwrite DB with defaults
   const defaults = JSON.parse(JSON.stringify(window.SKR_DEFAULT_CONTENT));
   await window.setSkrContent(defaults);
 };
+
+/* ─── Visit logging (fire-and-forget) ─── */
+(function () {
+  if (location.pathname.startsWith('/admin')) return;
+  try {
+    const data = JSON.stringify({ path: location.pathname, referrer: document.referrer || '' });
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/log', new Blob([data], { type: 'application/json' }));
+    } else {
+      fetch('/api/log', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: data, keepalive: true }).catch(() => {});
+    }
+  } catch {}
+})();
